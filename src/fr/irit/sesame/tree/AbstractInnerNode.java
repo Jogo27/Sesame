@@ -22,14 +22,17 @@ public abstract class AbstractInnerNode
     children[pos].removeTreeChangedListener(this);
   }
 
-  protected void initChooser(int pos, ChooserNodeType type) {
+  protected void initChooser(final int pos, Class<? extends ChooserNode> type)
+    throws InstantiationException
+  {
     ChooserNode chooser = getFactory().getChooser(type,
         new ReplaceSubtreeAction() {
-          public InnerNode getParentNode() { return getParent(); }
+          public InnerNode getParentNode() { return AbstractInnerNode.this; }
           public TreeNode currentSubtree() { return children[pos]; }
           public void replaceSubtree(TreeNode subtree) {
             detachSubtree(pos);
             attachSubtree(pos, subtree);
+            fireTreeChangedEvent(new TreeChangedEvent(AbstractInnerNode.this));
           }
         });
     attachSubtree(pos, chooser);

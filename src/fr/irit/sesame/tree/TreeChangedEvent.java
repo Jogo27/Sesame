@@ -4,7 +4,7 @@ import java.util.EventObject;
 
 public class TreeChangedEvent extends EventObject {
 
-  public TreeChangedEvent(Object source) {
+  public TreeChangedEvent(TreeNode source) {
     super(source);
   }
 

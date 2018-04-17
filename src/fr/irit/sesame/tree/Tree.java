@@ -10,10 +10,15 @@ public class Tree
 
   private ChooserNodeFactory factory;
 
-  public Tree(ChooserNodeFactory factory) {
+  public Tree(ChooserNodeFactory factory) throws InstantiationException {
     super(1, null);
     this.factory = factory;
-    attachSubtree(0, new ConstantLeafNode(this,"The most convoluted Hello World !"));
+    initChooser(0, FakeChooserNode.class);
+  }
+
+  @Override
+  public ChooserNodeFactory getFactory() {
+    return factory;
   }
 
   public String getText() {

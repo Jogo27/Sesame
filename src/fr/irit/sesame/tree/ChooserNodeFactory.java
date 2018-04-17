@@ -5,13 +5,8 @@ package fr.irit.sesame.tree;
  */
 public interface ChooserNodeFactory {
 
-  /**
-   * Provides the ChooserNode for the root of the tree
-   * (in an empty tree)
-   */
-  public ChooserNode getRootChooser(ReplaceSubtreeAction placement);
+  public ChooserNode getChooser(Class<? extends ChooserNode> type, ReplaceSubtreeAction replacement) throws InstantiationException;
 
-  public ChooserNode getChooser(ChooserNodeType type, ReplaceSubtreeAction replacement);
+  public void replaceSubtree(TreeNode toBeReplaced, TreeNode replaceBy, ReplaceSubtreeAction replacement);
 
-  public void replaceSubtree(TreeNode subtree, ReplaceSubtreeAction replacement);
 }
