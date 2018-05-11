@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import fr.irit.sesame.tree.*;
 
-/* FrameDemo.java requires no other files. */
 public class Main 
   extends JPanel
 {
@@ -82,18 +81,17 @@ public class Main
     }
   }
 
+
+  /**
+   * Populate the GUI with widgets and connect them.
+   */
   private Main() {
     super(new BorderLayout());
 
     label = new JLabel("Initialising...");
 
     factory = new FakeChooserNodeFactory();
-    try {
-      tree = new Tree(factory);
-    } catch (InstantiationException e) {
-      label.setText("Unable to initialiaze: " + e.toString());
-    }
-
+    tree = new Tree(factory);
 
     listModel = new MyListModel();
 
@@ -124,9 +122,8 @@ public class Main
   }
 
   /**
-    * Create the GUI and show it.  For thread safety,
-    * this method should be invoked from the
-    * event-dispatching thread.
+    * Create the GUI and show it.
+    * For thread safety, this method should be invoked from the event-dispatching thread.
     */
   private static void createAndShowGUI() {
     //Create and set up the window.
