@@ -2,6 +2,9 @@ package fr.irit.sesame.tree;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * ChooserNodeFactory for tests.
+ */
 public class FakeChooserNodeFactory
   implements ChooserNodeFactory
 {
@@ -12,15 +15,9 @@ public class FakeChooserNodeFactory
     lastChooser = null;
   }
 
-  public ChooserNode getChooser(Class<? extends ChooserNode> type, ReplaceSubtreeAction replacement) throws InstantiationException {
-    try {
-      lastChooser = type.getConstructor(InnerNode.class, ReplaceSubtreeAction.class).newInstance(replacement.getParentNode(), replacement);
-    } catch (NoSuchMethodException e) {
-      throw new InstantiationException("No constructor " + type.getName() + "(InnerNode, ReplaceSubtreeAction)");
-    } catch (IllegalAccessException|InvocationTargetException e) {
-      throw new InstantiationException("Chooser instanciation catches " +
-          e.getClass().getName() + ": " + e.toString());
-    }
+  public ChooserNode getChooser(ChooserNodeConstructor constructor, ReplaceSubtreeAction replacement)
+  {
+    lastChooser = constructor.make(replacement.getParentNode(), replacement);
     return lastChooser;
   }
 

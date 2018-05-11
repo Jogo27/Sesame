@@ -14,11 +14,17 @@ public class FakeChooserNode extends AbstractChooserNode {
     }
   }
 
-  public FakeChooserNode(InnerNode parent, ReplaceSubtreeAction action) {
+  private FakeChooserNode(InnerNode parent, ReplaceSubtreeAction action) {
     super(parent, action);
     choices.add(0, new FakeChoice("Hello World"));
     choices.add(1, new FakeChoice("Hello Foobar"));
   }
+
+  public static ChooserNodeConstructor constructor = new ChooserNodeConstructor() {
+    public ChooserNode make(InnerNode parent, ReplaceSubtreeAction action) {
+      return new FakeChooserNode(parent, action);
+    }
+  };
 
   public String getText() {
     return "<Fake>";

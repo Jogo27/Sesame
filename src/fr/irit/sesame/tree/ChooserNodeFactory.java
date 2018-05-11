@@ -5,7 +5,7 @@ package fr.irit.sesame.tree;
  */
 public interface ChooserNodeFactory {
 
-  public ChooserNode getChooser(Class<? extends ChooserNode> type, ReplaceSubtreeAction replacement) throws InstantiationException;
+  public ChooserNode getChooser(ChooserNodeConstructor constructor, ReplaceSubtreeAction replacement);
 
   public void replaceSubtree(TreeNode toBeReplaced, TreeNode replaceBy, ReplaceSubtreeAction replacement);
 

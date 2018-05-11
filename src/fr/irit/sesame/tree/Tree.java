@@ -10,10 +10,10 @@ public class Tree
 
   private ChooserNodeFactory factory;
 
-  public Tree(ChooserNodeFactory factory) throws InstantiationException {
+  public Tree(ChooserNodeFactory factory) {
     super(1, null);
     this.factory = factory;
-    initChooser(0, FakeChooserNode.class);
+    initChooser(0, FakeChooserNode.constructor);
   }
 
   @Override

@@ -1,5 +1,12 @@
 package fr.irit.sesame.tree;
 
+/**
+ * Basic implementation of an inner node with a fixed number of children.
+ *
+ * Subclasses must implement only the getText method.
+ *
+ * TreeChangedEvent are propagated from the leaves (children) to the root (parent).
+ */
 public abstract class AbstractInnerNode
   extends AbstractTreeNode implements InnerNode, TreeChangedListener
 {
@@ -22,10 +29,13 @@ public abstract class AbstractInnerNode
     children[pos].removeTreeChangedListener(this);
   }
 
-  protected void initChooser(final int pos, Class<? extends ChooserNode> type)
-    throws InstantiationException
+  /**
+   * Attach a new chooser as child.
+   * To be used in subclasses' constructors.
+   */
+  protected void initChooser(final int pos, ChooserNodeConstructor constructor)
   {
-    ChooserNode chooser = getFactory().getChooser(type,
+    ChooserNode chooser = getFactory().getChooser(constructor,
         new ReplaceSubtreeAction() {
           public InnerNode getParentNode() { return AbstractInnerNode.this; }
           public TreeNode currentSubtree() { return children[pos]; }
