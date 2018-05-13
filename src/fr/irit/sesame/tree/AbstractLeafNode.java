@@ -1,7 +1,12 @@
 package fr.irit.sesame.tree;
 
+/**
+ * Implementation of a LeafNode.
+ *
+ * Subclasses must implement only the {@link #getText() getText()} method.
+ */
 public abstract class AbstractLeafNode
-extends AbstractTreeNode
+extends AbstractNode
 implements LeafNode
 {
 
@@ -9,14 +14,14 @@ implements LeafNode
     super(parent);
   }
 
-  public TreeNode nextNode(TreeNode from) throws TreeNode.TraversalException {
+  public Node nextNode(Node from) throws TraversalException {
     if (from == this) return getParent().nextNode(this);
-    throw new TreeNode.TraversalException("From somewhere else than this node");
+    throw new TraversalException("From somewhere else than this node");
   }
 
-  public TreeNode prevNode(TreeNode from) throws TreeNode.TraversalException {
+  public Node prevNode(Node from) throws TraversalException {
     if (from == this) return getParent().prevNode(this);
-    throw new TreeNode.TraversalException("From somewhere else than this node");
+    throw new TraversalException("From somewhere else than this node");
   }
 
 }

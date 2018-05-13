@@ -1,28 +1,27 @@
 package fr.irit.sesame.tree;
 
-public interface TreeNode {
+/**
+ * Any node in the tree.
+ */
+public interface Node {
 
   InnerNode getParent();
   // void setParent(InnerNode parent);
   
   ChooserNodeFactory getFactory();
   
-  static class TraversalException extends Exception {
-    public TraversalException() { super(); }
-    public TraversalException(String message) { super(message); }
-  }
 
   /**
    * The next node in a depth-first traversal.
    * @param from last visited node
    */
-  TreeNode nextNode(TreeNode from) throws TraversalException;
+  Node nextNode(Node from) throws TraversalException;
 
   /**
    * The previous node in a depth-first traversal.
    * @param from last visited node
    */
-  TreeNode prevNode(TreeNode from) throws TraversalException;
+  Node prevNode(Node from) throws TraversalException;
 
   void addTreeChangedListener(TreeChangedListener listener);
   void removeTreeChangedListener(TreeChangedListener listener);

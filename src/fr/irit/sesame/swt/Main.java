@@ -1,10 +1,25 @@
 package fr.irit.sesame.swt;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import fr.irit.sesame.tree.*;
+import java.awt.BorderLayout;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import fr.irit.sesame.lang.Tree;
+import fr.irit.sesame.tree.ChooserNode;
+import fr.irit.sesame.tree.FakeChooserNodeFactory;
+import fr.irit.sesame.tree.TreeChangedEvent;
+import fr.irit.sesame.tree.TreeChangedListener;
+import fr.irit.sesame.util.ListenerHandler;
 
 public class Main 
   extends JPanel

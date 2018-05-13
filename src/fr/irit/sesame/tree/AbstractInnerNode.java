@@ -1,26 +1,26 @@
 package fr.irit.sesame.tree;
 
 /**
- * Basic implementation of an inner node with a fixed number of children.
+ * Implementation of an InnerNode with a fixed number of children.
  *
- * Subclasses must implement only the getText method.
+ * Subclasses must implement only the {@link #getText() getText()} method.
  *
- * TreeChangedEvent are propagated from the leaves (children) to the root (parent).
+ * {@link TreeChangedEvent} are propagated from the leaves (children) to the root (parent).
  */
 public abstract class AbstractInnerNode
-  extends AbstractTreeNode implements InnerNode, TreeChangedListener
+  extends AbstractNode implements InnerNode, TreeChangedListener
 {
 
   protected int nbChildren;
-  protected TreeNode[] children;
+  protected Node[] children;
 
   protected AbstractInnerNode(int nbChildren, InnerNode parent) {
     super(parent);
     this.nbChildren = nbChildren;
-    children = new TreeNode[this.nbChildren];
+    children = new Node[this.nbChildren];
   }
 
-  protected void attachSubtree(int pos, TreeNode subtree) {
+  protected void attachSubtree(int pos, Node subtree) {
     children[pos] = subtree;
     children[pos].addTreeChangedListener(this);
   }
@@ -38,8 +38,8 @@ public abstract class AbstractInnerNode
     ChooserNode chooser = getFactory().getChooser(constructor,
         new ReplaceSubtreeAction() {
           public InnerNode getParentNode() { return AbstractInnerNode.this; }
-          public TreeNode currentSubtree() { return children[pos]; }
-          public void replaceSubtree(TreeNode subtree) {
+          public Node currentSubtree() { return children[pos]; }
+          public void replaceSubtree(Node subtree) {
             detachSubtree(pos);
             attachSubtree(pos, subtree);
             fireTreeChangedEvent(new TreeChangedEvent(AbstractInnerNode.this));
@@ -48,22 +48,22 @@ public abstract class AbstractInnerNode
     attachSubtree(pos, chooser);
   }
 
-  public TreeNode nextNode(TreeNode from) throws TraversalException {
+  public Node nextNode(Node from) throws TraversalException {
     if (from == parent) return this;
     if ((from == this) || (from == null)) return children[0];
     if (from == children[nbChildren - 1]) return parent.nextNode(this);
     for (int i = 0; i < nbChildren - 1; i++) 
       if (from == children[i]) return children[i+1];
-    throw new TreeNode.TraversalException("Wrong from for next");
+    throw new TraversalException("Wrong from for next");
   }
 
-  public TreeNode prevNode(TreeNode from) throws TraversalException {
+  public Node prevNode(Node from) throws TraversalException {
     if ((from == parent) || (from == null)) return children[nbChildren - 1];
     if (from == this) return parent.prevNode(this);
     if (from == children[1]) return this;
     for (int i = 1; i < nbChildren; i--) 
       if (from == children[i]) return children[i-1];
-    throw new TreeNode.TraversalException("Wrong from for prev");
+    throw new TraversalException("Wrong from for prev");
   }
 
   public void onTreeChange(TreeChangedEvent event) {

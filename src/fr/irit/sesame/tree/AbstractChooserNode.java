@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Implements choices as a list.
+ * Implementation of a ChooserNode using a List for the choices.
  *
- * The only method to implement in the subclass is getText().
+ * The only method to implement in the subclass is {@link #getText() getText()}.
  */
 abstract public class AbstractChooserNode
   extends AbstractLeafNode
@@ -14,11 +14,11 @@ abstract public class AbstractChooserNode
 {
 
   /**
-   * Represent a choice of the chooser.
+   * A choice of the chooser.
    */
   static protected interface Choice {
     String getDescription();
-    TreeNode replacement(InnerNode parent);
+    Node replacement(InnerNode parent);
   }
 
   /** 

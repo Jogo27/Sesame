@@ -1,4 +1,4 @@
-package fr.irit.sesame.tree;
+package fr.irit.sesame.util;
 
 import java.util.EventListener;
 import java.util.Collection;

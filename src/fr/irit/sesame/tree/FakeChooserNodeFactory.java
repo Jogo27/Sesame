@@ -25,7 +25,7 @@ public class FakeChooserNodeFactory
     return lastChooser;
   }
 
-  public void replaceSubtree(TreeNode toBeReplaced, TreeNode replaceBy, ReplaceSubtreeAction replacement) {
+  public void replaceSubtree(Node toBeReplaced, Node replaceBy, ReplaceSubtreeAction replacement) {
     lastChooser = null;
     replacement.replaceSubtree(replaceBy);
   }

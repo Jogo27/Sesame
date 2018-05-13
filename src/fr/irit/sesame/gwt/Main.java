@@ -13,9 +13,9 @@ import com.google.gwt.text.shared.ToStringRenderer;
 
 import fr.irit.sesame.tree.ChooserNode;
 import fr.irit.sesame.tree.FakeChooserNodeFactory;
-import fr.irit.sesame.tree.Tree;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
+import fr.irit.sesame.lang.Tree;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -51,7 +51,7 @@ public class Main implements EntryPoint {
    * This is the entry point method.
    */
   public void onModuleLoad() {
-    final ValuePicker<Choice> selector = new ValuePicker(new ToStringRenderer("-null error-"));
+    final ValuePicker<Choice> selector = new ValuePicker<Choice>(new ToStringRenderer("-null error-"));
     final Label outputLabel = new Label();
 
     final FakeChooserNodeFactory factory = new FakeChooserNodeFactory();

@@ -1,4 +1,7 @@
 package fr.irit.sesame.tree;
 
-public interface InnerNode extends TreeNode {
+/**
+ * Any node that have children.
+ */
+public interface InnerNode extends Node {
 }

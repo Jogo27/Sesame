@@ -1,4 +1,7 @@
-package fr.irit.sesame.tree;
+package fr.irit.sesame.lang;
+
+import fr.irit.sesame.tree.AbstractInnerNode;
+import fr.irit.sesame.tree.ChooserNodeFactory;
 
 /**
  * A syntactic tree denoting a semantics.

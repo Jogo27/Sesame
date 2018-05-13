@@ -47,6 +47,7 @@
         source="1.7" target="1.7" nowarn="true"
         debug="true" debuglevel="lines,vars,source">
       <classpath refid="project.class.path"/>
+      <compilerarg value="-Xlint:unchecked"/>
     </javac>
     <copy todir="war/WEB-INF/classes">
       <fileset dir="src" excludes="**/*.java"/>
@@ -65,6 +66,14 @@
       <arg line="${gwt.args}"/>
       <arg value="fr.irit.sesame.Main"/>
     </java>
+  </target>
+
+  <target name="doc" description="Documentation">
+    <javadoc sourcepath="${src}" destdir="doc" access="package" version="yes" author="yes" use="yes">
+      <classpath refid="project.class.path"/>
+      <link href="http://www.gwtproject.org/javadoc/latest/" />
+      <link href="https://docs.oracle.com/javase/7/docs/api/"/>
+    </javadoc>
   </target>
 
 </project>

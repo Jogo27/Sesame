@@ -2,9 +2,12 @@ package fr.irit.sesame.tree;
 
 import java.util.EventObject;
 
+/**
+ * Any change in the tree.
+ */
 public class TreeChangedEvent extends EventObject {
 
-  public TreeChangedEvent(TreeNode source) {
+  public TreeChangedEvent(Node source) {
     super(source);
   }
 

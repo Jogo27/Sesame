@@ -1,6 +1,18 @@
 package fr.irit.sesame.tree;
 
-public abstract class AbstractTreeNode implements TreeNode {
+import fr.irit.sesame.util.ListenerHandler;
+
+/**
+ * Implementation of a Node.
+ *
+ * Subclasses must implement the following methods: 
+ * {@link #getText() getText()},
+ * {@link #nextNode(Node) nextNode(Node)},
+ * {@link #prevNode(Node) prevNode(Node)}.
+ */
+public abstract class AbstractNode
+  implements Node
+{
 
   // Fields
   
@@ -9,12 +21,12 @@ public abstract class AbstractTreeNode implements TreeNode {
 
   // Constructor
 
-  protected AbstractTreeNode(InnerNode parent) {
+  protected AbstractNode(InnerNode parent) {
     this.parent = parent;
     treeChangedListeners = new ListenerHandler<TreeChangedListener>();
   }
 
-  // TreeNode's implementation
+  // Node's implementation
 
   public InnerNode getParent() {
     return parent;

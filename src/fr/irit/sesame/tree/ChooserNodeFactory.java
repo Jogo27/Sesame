@@ -7,6 +7,6 @@ public interface ChooserNodeFactory {
 
   public ChooserNode getChooser(ChooserNodeConstructor constructor, ReplaceSubtreeAction replacement);
 
-  public void replaceSubtree(TreeNode toBeReplaced, TreeNode replaceBy, ReplaceSubtreeAction replacement);
+  public void replaceSubtree(Node toBeReplaced, Node replaceBy, ReplaceSubtreeAction replacement);
 
 }
