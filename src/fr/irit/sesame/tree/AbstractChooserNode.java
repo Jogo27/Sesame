@@ -13,26 +13,23 @@ abstract public class AbstractChooserNode
   implements ChooserNode 
 {
 
-  /**
-   * A choice of the chooser.
-   */
-  static protected interface Choice {
-    String getDescription();
-    Node replacement(InnerNode parent);
+  protected static abstract class Constructor
+    implements ChooserNodeConstructor, NodeConstructor
+  {
+    public Node makeNode(InnerNode parent) {
+      return this.makeChooserNode(parent);
+    }
   }
 
   /** 
    * The list of choices of the chooser.
    * Typically, the constructor of the subclass adds choices to this list.
    */
-  protected List<Choice> choices;
+  protected List<NodeConstructor> choices;
 
-  protected ReplaceSubtreeAction action;
-
-  protected AbstractChooserNode(InnerNode parent, ReplaceSubtreeAction action) {
+  protected AbstractChooserNode(InnerNode parent) {
     super(parent);
-    choices = new ArrayList<Choice>();
-    this.action = action;
+    choices = new ArrayList<NodeConstructor>();
   }
 
   public int getNbChoices() {
@@ -43,8 +40,8 @@ abstract public class AbstractChooserNode
     return choices.get(pos).getDescription();
   }
 
-  public void choose(int pos) throws IndexOutOfBoundsException {
-    getFactory().replaceSubtree(this, choices.get(pos).replacement(getParent()), action);
+  public Node makeChoice(int pos) throws IndexOutOfBoundsException {
+    return choices.get(pos).makeNode(getParent());
   }
 
 }

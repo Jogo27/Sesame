@@ -7,6 +7,6 @@ package fr.irit.sesame.tree;
  */
 public interface ChooserNodeConstructor {
 
-  ChooserNode make(InnerNode parent, ReplaceSubtreeAction replacement);
+  ChooserNode makeChooserNode(InnerNode parent);
 
 }

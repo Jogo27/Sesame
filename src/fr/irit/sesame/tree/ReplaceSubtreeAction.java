@@ -8,6 +8,7 @@ package fr.irit.sesame.tree;
  */
 public interface ReplaceSubtreeAction {
 
+  //TODO: remove this method.
   InnerNode getParentNode();
 
   Node currentSubtree();

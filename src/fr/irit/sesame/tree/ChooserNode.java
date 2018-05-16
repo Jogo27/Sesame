@@ -13,10 +13,9 @@ public interface ChooserNode extends LeafNode {
   String getChoice(int pos);
 
   /** 
-   * Replace itself in the tree with the choosen node. 
-   * The object is still usuable after a call to choose,
-   * but it is not a leaf of the tree anymore.
+   * Create the node corresponding to the given choice.
+   * @param pos Id of the choice.
    */
-  void choose(int pos);
+  Node makeChoice(int pos);
 
 }

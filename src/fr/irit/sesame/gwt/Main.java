@@ -73,7 +73,7 @@ public class Main implements EntryPoint {
 
     selector.addValueChangeHandler(new ValueChangeHandler<Choice>() {
       public void onValueChange(ValueChangeEvent<Choice> event) {
-        factory.getLastChooser().choose(event.getValue().id);
+        factory.choose(event.getValue().id);
       }
     });
   }

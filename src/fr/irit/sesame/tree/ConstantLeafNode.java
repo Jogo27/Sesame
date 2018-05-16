@@ -5,6 +5,18 @@ package fr.irit.sesame.tree;
  */
 public class ConstantLeafNode extends AbstractLeafNode {
 
+  static public class Constructor
+    extends AbstractNode.Constructor
+  {
+    public Constructor(String text) {
+      super(text);
+    }
+
+    public Node makeNode(InnerNode parent) {
+      return new ConstantLeafNode(parent, description);
+    }
+  }
+
   protected String text;
 
   /**

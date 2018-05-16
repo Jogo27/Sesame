@@ -21,6 +21,20 @@ public abstract class AbstractNode
 
   // Constructor
 
+  static protected abstract class Constructor
+    implements NodeConstructor
+  {
+    protected String description;
+
+    public Constructor(String description) {
+      this.description = description;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+  }
+
   protected AbstractNode(InnerNode parent) {
     this.parent = parent;
     treeChangedListeners = new ListenerHandler<TreeChangedListener>();

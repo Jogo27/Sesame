@@ -117,7 +117,7 @@ public class Main
         if (!e.getValueIsAdjusting()) {
           int index = list.getSelectedIndex();
           if (index >= 0)
-            factory.getLastChooser().choose(index);
+            factory.choose(index);
         }
       }
     });

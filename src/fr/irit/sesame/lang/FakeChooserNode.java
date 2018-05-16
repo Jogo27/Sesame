@@ -11,31 +11,31 @@ import fr.irit.sesame.tree.ReplaceSubtreeAction;
 /**
  * Class to test chooser conception.
  */
-public class FakeChooserNode extends AbstractChooserNode {
+public class FakeChooserNode
+  extends AbstractChooserNode
+{
 
-  private class FakeChoice implements Choice {
-    String description;
-    FakeChoice(String description) { this.description = description; }
+  private static final String description = "<Fake>";
+
+  // Constructor
+
+  private FakeChooserNode(InnerNode parent) {
+    super(parent);
+    choices.add(0, new ConstantLeafNode.Constructor("Hello World"));
+    choices.add(1, new ConstantLeafNode.Constructor("Hello Foobar"));
+  }
+
+  private static class Constructor extends AbstractChooserNode.Constructor {
     public String getDescription() { return description; }
-    public Node replacement(InnerNode parent)  {
-      return new ConstantLeafNode(getParent(), description);
-    }
+    public ChooserNode makeChooserNode(InnerNode parent) { return new FakeChooserNode(parent); }
   }
 
-  private FakeChooserNode(InnerNode parent, ReplaceSubtreeAction action) {
-    super(parent, action);
-    choices.add(0, new FakeChoice("Hello World"));
-    choices.add(1, new FakeChoice("Hello Foobar"));
-  }
+  public static ChooserNodeConstructor constructor = new Constructor();
 
-  public static ChooserNodeConstructor constructor = new ChooserNodeConstructor() {
-    public ChooserNode make(InnerNode parent, ReplaceSubtreeAction action) {
-      return new FakeChooserNode(parent, action);
-    }
-  };
+  // Implentation of ChooserNode
 
   public String getText() {
-    return "<Fake>";
+    return description;
   }
 
 }

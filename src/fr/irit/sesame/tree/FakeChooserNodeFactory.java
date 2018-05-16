@@ -9,7 +9,18 @@ public class FakeChooserNodeFactory
   implements ChooserNodeFactory
 {
 
-  private ChooserNode lastChooser;
+  static private class CNWithAction
+      extends ChooserNodeDecorator
+  {
+    ReplaceSubtreeAction action;
+
+    CNWithAction(ChooserNode node, ReplaceSubtreeAction action) {
+      super(node);
+      this.action = action;
+    }
+  }
+
+  private CNWithAction lastChooser;
 
   public FakeChooserNodeFactory() {
     lastChooser = null;
@@ -17,7 +28,7 @@ public class FakeChooserNodeFactory
 
   public ChooserNode getChooser(ChooserNodeConstructor constructor, ReplaceSubtreeAction replacement)
   {
-    lastChooser = constructor.make(replacement.getParentNode(), replacement);
+    lastChooser = new CNWithAction(constructor.makeChooserNode(replacement.getParentNode()), replacement);
     return lastChooser;
   }
 
@@ -25,9 +36,11 @@ public class FakeChooserNodeFactory
     return lastChooser;
   }
 
-  public void replaceSubtree(Node toBeReplaced, Node replaceBy, ReplaceSubtreeAction replacement) {
+  public void choose(int pos) {
+    if (lastChooser == null) return;
+    CNWithAction prevChooser = lastChooser;
     lastChooser = null;
-    replacement.replaceSubtree(replaceBy);
+    prevChooser.action.replaceSubtree(prevChooser.makeChoice(pos));
   }
 
 }
