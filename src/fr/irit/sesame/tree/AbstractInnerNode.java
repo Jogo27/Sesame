@@ -50,19 +50,19 @@ public abstract class AbstractInnerNode
 
   public Node nextNode(Node from) throws TraversalException {
     if (from == parent) return this;
-    if ((from == this) || (from == null)) return children[0];
+    if (from == this) return children[0].nextNode(this);
     if (from == children[nbChildren - 1]) return parent.nextNode(this);
     for (int i = 0; i < nbChildren - 1; i++) 
-      if (from == children[i]) return children[i+1];
+      if (from == children[i]) return children[i+1].nextNode(this);
     throw new TraversalException("Wrong from for next");
   }
 
   public Node prevNode(Node from) throws TraversalException {
-    if ((from == parent) || (from == null)) return children[nbChildren - 1];
+    if (from == parent) return children[nbChildren - 1].prevNode(this);
     if (from == this) return parent.prevNode(this);
-    if (from == children[1]) return this;
-    for (int i = 1; i < nbChildren; i--) 
-      if (from == children[i]) return children[i-1];
+    if (from == children[0]) return this;
+    for (int i = 1; i < nbChildren; i++) 
+      if (from == children[i]) return children[i-1].prevNode(this);
     throw new TraversalException("Wrong from for prev");
   }
 

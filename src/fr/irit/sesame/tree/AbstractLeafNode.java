@@ -16,11 +16,13 @@ implements LeafNode
 
   public Node nextNode(Node from) throws TraversalException {
     if (from == this) return getParent().nextNode(this);
+    if (from == getParent()) return this;
     throw new TraversalException("From somewhere else than this node");
   }
 
   public Node prevNode(Node from) throws TraversalException {
     if (from == this) return getParent().prevNode(this);
+    if (from == getParent()) return this;
     throw new TraversalException("From somewhere else than this node");
   }
 

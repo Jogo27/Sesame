@@ -16,7 +16,9 @@ import javax.swing.event.ListSelectionListener;
 
 import fr.irit.sesame.lang.Tree;
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.FakeChooserNodeFactory;
+import fr.irit.sesame.tree.GenericChooserModel;
+import fr.irit.sesame.tree.ChooserChangedEvent;
+import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
 import fr.irit.sesame.util.ListenerHandler;
@@ -24,30 +26,27 @@ import fr.irit.sesame.util.ListenerHandler;
 public class Main 
   extends JPanel
 {
-  private FakeChooserNodeFactory factory;
+  private GenericChooserModel factory;
   private Tree tree;
   
-  private ListModel<String> listModel;
   private JList<String> list;
   private JLabel label;
 
-  private class MyListModel implements ListModel<String>, TreeChangedListener  {
+  private class MyListModel implements ListModel<String>, ChooserChangedListener  {
 
     private ListenerHandler<ListDataListener> handler;
     private int curSize;
 
-    private int getCurrentSize() {
-      if (factory == null) return 0;
-      ChooserNode chooser = factory.getLastChooser();
-      if (chooser == null) return 0;
-      return chooser.getNbChoices();
-    }
-
     MyListModel() {
       handler = new ListenerHandler<ListDataListener>();
       curSize = getCurrentSize();
-      if (tree != null)
-        tree.addTreeChangedListener(this);
+    }
+
+    private int getCurrentSize() {
+      if (factory == null) return 0;
+      ChooserNode chooser = factory.getChooser();
+      if (chooser == null) return 0;
+      return chooser.getNbChoices();
     }
 
     public void addListDataListener(ListDataListener l) {
@@ -58,7 +57,7 @@ public class Main
       handler.remove(l);
     }
 
-    public void onTreeChange(TreeChangedEvent source) {
+    public void onChooserChange(ChooserChangedEvent source) {
       ListDataEvent event;
       int newSize = getCurrentSize();
 
@@ -90,7 +89,7 @@ public class Main
     }
 
     public String getElementAt(int index) {
-      ChooserNode chooser = factory.getLastChooser();
+      ChooserNode chooser = factory.getChooser();
       if (chooser == null) return "---";
       return chooser.getChoice(index);
     }
@@ -105,10 +104,11 @@ public class Main
 
     label = new JLabel("Initialising...");
 
-    factory = new FakeChooserNodeFactory();
+    factory = new GenericChooserModel();
     tree = new Tree(factory);
 
-    listModel = new MyListModel();
+    MyListModel listModel = new MyListModel();
+    factory.addChooserChangedListener(listModel);
 
     list = new JList<String>(listModel);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

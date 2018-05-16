@@ -11,8 +11,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValuePicker;
 import com.google.gwt.text.shared.ToStringRenderer;
 
+import fr.irit.sesame.tree.ChooserChangedEvent;
+import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.FakeChooserNodeFactory;
+import fr.irit.sesame.tree.GenericChooserModel;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
 import fr.irit.sesame.lang.Tree;
@@ -54,7 +56,7 @@ public class Main implements EntryPoint {
     final ValuePicker<Choice> selector = new ValuePicker<Choice>(new ToStringRenderer("-null error-"));
     final Label outputLabel = new Label();
 
-    final FakeChooserNodeFactory factory = new FakeChooserNodeFactory();
+    final GenericChooserModel factory = new GenericChooserModel();
     final Tree tree = new Tree(factory);
 
     // Add the nameField and sendButton to the RootPanel
@@ -62,9 +64,16 @@ public class Main implements EntryPoint {
     RootPanel.get("selectorContainer").add(selector);
     RootPanel.get("outputContainer").add(outputLabel);
 
+    ChooserChangedListener chooserListener = new ChooserChangedListener() {
+      public void onChooserChange(ChooserChangedEvent event) {
+        selector.setAcceptableValues(makeChoices(factory.getChooser()));
+      }
+    };
+    chooserListener.onChooserChange(new ChooserChangedEvent(factory));
+    factory.addChooserChangedListener(chooserListener);
+
     TreeChangedListener treeListener = new TreeChangedListener() {
       public void onTreeChange(TreeChangedEvent source) {
-        selector.setAcceptableValues(makeChoices(factory.getLastChooser()));
         outputLabel.setText(tree.getText());
       }
     };
