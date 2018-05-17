@@ -1,24 +1,26 @@
-package fr.irit.sesame.swt;
+package fr.irit.sesame.swing;
 
-import java.awt.BorderLayout;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import fr.irit.sesame.lang.Tree;
-import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.GenericChooserModel;
 import fr.irit.sesame.tree.ChooserChangedEvent;
 import fr.irit.sesame.tree.ChooserChangedListener;
+import fr.irit.sesame.tree.ChooserNode;
+import fr.irit.sesame.tree.GenericChooserModel;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
 import fr.irit.sesame.util.ListenerHandler;
@@ -30,7 +32,7 @@ public class Main
   private Tree tree;
   
   private JList<String> list;
-  private JLabel label;
+  private JEditorPane textOutput;
 
   private class MyListModel implements ListModel<String>, ChooserChangedListener  {
 
@@ -100,9 +102,14 @@ public class Main
    * Populate the GUI with widgets and connect them.
    */
   private Main() {
-    super(new BorderLayout());
+    super();
+    setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-    label = new JLabel("Initialising...");
+    textOutput = new JEditorPane();
+    textOutput.setContentType("text/html");
+    textOutput.setEditable(false);
+    textOutput.setFocusable(false);
+    textOutput.setBorder(BorderFactory.createEtchedBorder());
 
     factory = new GenericChooserModel();
     tree = new Tree(factory);
@@ -124,16 +131,16 @@ public class Main
     list.setVisibleRowCount(5);
     JScrollPane listScrollPane = new JScrollPane(list);
 
-    label.setText(tree.getText());
+    textOutput.setText("<html>"+tree.getText());
     tree.addTreeChangedListener(new TreeChangedListener() {
       public void onTreeChange(TreeChangedEvent event) {
         list.clearSelection();
-        label.setText(tree.getText());
+        textOutput.setText("<html>"+tree.getText());
       }
     });
 
-    add(list, BorderLayout.WEST);
-    add(label, BorderLayout.EAST);
+    add(list);
+    add(textOutput);
   }
 
   /**
@@ -161,6 +168,7 @@ public class Main
     //creating and showing this application's GUI.
     javax.swing.SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        UIManager.put("swing.boldMetal", Boolean.FALSE);
         createAndShowGUI();
       }
     });

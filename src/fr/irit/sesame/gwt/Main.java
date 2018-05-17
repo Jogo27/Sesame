@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValuePicker;
 import com.google.gwt.text.shared.ToStringRenderer;
@@ -54,7 +54,7 @@ public class Main implements EntryPoint {
    */
   public void onModuleLoad() {
     final ValuePicker<Choice> selector = new ValuePicker<Choice>(new ToStringRenderer("-null error-"));
-    final Label outputLabel = new Label();
+    final HTML outputLabel = new HTML();
 
     final GenericChooserModel factory = new GenericChooserModel();
     final Tree tree = new Tree(factory);
@@ -74,7 +74,7 @@ public class Main implements EntryPoint {
 
     TreeChangedListener treeListener = new TreeChangedListener() {
       public void onTreeChange(TreeChangedEvent source) {
-        outputLabel.setText(tree.getText());
+        outputLabel.setHTML(tree.getText());
       }
     };
     treeListener.onTreeChange(new TreeChangedEvent(tree));

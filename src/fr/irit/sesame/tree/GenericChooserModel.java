@@ -22,14 +22,15 @@ public class GenericChooserModel
     final ReplaceSubtreeAction action;
     private NavigableChooserNode prev;
     private NavigableChooserNode next;
+    boolean selected;
 
     NavigableChooserNode(ChooserNode node, ReplaceSubtreeAction action) {
       super(node);
-
       this.action = action;
 
       this.prev = this; // means unset
       this.next = this;
+      this.selected = false;
     }
 
     NavigableChooserNode nextChooser() {
@@ -62,6 +63,19 @@ public class GenericChooserModel
       if (nextChooser() != null)
         next.prev = this.prev;
     }
+
+    void setSelected(boolean selected) {
+      this.selected = selected;
+      fireTreeChangedEvent(new TreeChangedEvent(this));
+    }
+
+    @Override
+    public String getText() {
+      if (selected)
+        return "<b>" + realNode.getText() + "</b>";
+      return realNode.getText();
+    }
+
   }
 
   // Fields
@@ -83,6 +97,7 @@ public class GenericChooserModel
     NavigableChooserNode chooser = new NavigableChooserNode(constructor.makeChooserNode(replacement.getParentNode()), replacement);
     if (currentChooser == null) {
       currentChooser = chooser;
+      currentChooser.setSelected(true);
       fireChooserChangedEvent(new ChooserChangedEvent(this));
     }
     return chooser;
@@ -98,6 +113,7 @@ public class GenericChooserModel
     if (currentChooser == null) return;
 
     NavigableChooserNode oldChooser = currentChooser;
+    oldChooser.setSelected(false);
     currentChooser = null; // Allows the new subtree to update the current ChooserNode.
 
     NavigableChooserNode newChooser; // The chooser to make current if the replacement does not introduce a new chooser.
@@ -110,6 +126,8 @@ public class GenericChooserModel
     
     if (currentChooser == null) { // If no ChooserNode has been constructed by the previous line.
       currentChooser = newChooser;
+      if (currentChooser != null) //TODO; this is ugly !
+        currentChooser.setSelected(true);
       fireChooserChangedEvent(new ChooserChangedEvent(this));
     }
   }

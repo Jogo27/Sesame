@@ -1,13 +1,16 @@
 package fr.irit.sesame.tree;
 
 public class ChooserNodeDecorator
-  implements ChooserNode
+  extends AbstractTreeChangedHandler
+  implements ChooserNode, TreeChangedListener
 {
 
   protected ChooserNode realNode;
 
   public ChooserNodeDecorator(ChooserNode node) {
+    super();
     this.realNode = node;
+    this.realNode.addTreeChangedListener(this);
   }
 
 
@@ -40,7 +43,6 @@ public class ChooserNodeDecorator
     return this.realNode.getParent();
   }
 
-
   public Node nextNode(Node from) throws TraversalException {
     if (from == getParent()) return this;
     return getParent().nextNode(from);
@@ -51,12 +53,8 @@ public class ChooserNodeDecorator
     return getParent().prevNode(from);
   }
 
-  public void addTreeChangedListener(TreeChangedListener listener) {
-    this.realNode.addTreeChangedListener(listener);
-  }
-
-  public void removeTreeChangedListener(TreeChangedListener listener) {
-    this.realNode.removeTreeChangedListener(listener);
+  public void onTreeChange(TreeChangedEvent event) {
+    fireTreeChangedEvent(event);
   }
 
 }

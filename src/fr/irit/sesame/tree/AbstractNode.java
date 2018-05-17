@@ -1,7 +1,5 @@
 package fr.irit.sesame.tree;
 
-import fr.irit.sesame.util.ListenerHandler;
-
 /**
  * Implementation of a Node.
  *
@@ -11,13 +9,12 @@ import fr.irit.sesame.util.ListenerHandler;
  * {@link #prevNode(Node) prevNode(Node)}.
  */
 public abstract class AbstractNode
-  implements Node
+  extends AbstractTreeChangedHandler
 {
 
   // Fields
   
   protected InnerNode parent;
-  private ListenerHandler<TreeChangedListener> treeChangedListeners;
 
   // Constructor
 
@@ -36,8 +33,8 @@ public abstract class AbstractNode
   }
 
   protected AbstractNode(InnerNode parent) {
+    super();
     this.parent = parent;
-    treeChangedListeners = new ListenerHandler<TreeChangedListener>();
   }
 
   // Node's implementation
@@ -50,16 +47,4 @@ public abstract class AbstractNode
     return getParent().getFactory();
   }
 
-  public void addTreeChangedListener(TreeChangedListener listener) {
-    treeChangedListeners.add(listener);
-  }
-  
-  public void removeTreeChangedListener(TreeChangedListener listener) {
-    treeChangedListeners.remove(listener);
-  }
-
-  protected void fireTreeChangedEvent(TreeChangedEvent event) {
-    for (TreeChangedListener listener : treeChangedListeners)
-      listener.onTreeChange(event);
-  }
 }

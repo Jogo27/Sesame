@@ -10,7 +10,7 @@ public class PrincipleChooser
   extends AbstractChooserNode
 {
 
-  static String description = "<principle>";
+  static String description = "[principle]";
 
   // Constructors
   
