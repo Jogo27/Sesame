@@ -25,37 +25,41 @@ public class GenericChooserModel
 
     NavigableChooserNode(ChooserNode node, ReplaceSubtreeAction action) {
       super(node);
+
       this.action = action;
 
-      try {
-        Node n;
-        for (n = node.prevNode(node); !(n instanceof NavigableChooserNode); n = n.prevNode(n)) {}
-        prev = (NavigableChooserNode) n;
-      } catch (TraversalException e) {
-        prev = null;
-      }
-
-      try {
-        Node n;
-        for (n = node.nextNode(node); !(n instanceof NavigableChooserNode); n = n.nextNode(n)) {}
-        next = (NavigableChooserNode) n;
-      } catch (TraversalException e) {
-        next = null;
-      }
+      this.prev = this; // means unset
+      this.next = this;
     }
 
     NavigableChooserNode nextChooser() {
+      if (next == this)
+        try {
+          Node n;
+          for (n = this.nextNode(this); !(n instanceof NavigableChooserNode); n = n.nextNode(n)) {}
+          next = (NavigableChooserNode) n;
+        } catch (TraversalException e) {
+          next = null;
+        }
       return next;
     }
 
     NavigableChooserNode prevChooser() {
+      if (prev == this)
+        try {
+          Node n;
+          for (n = this.prevNode(this); !(n instanceof NavigableChooserNode); n = n.prevNode(n)) {}
+          prev = (NavigableChooserNode) n;
+        } catch (TraversalException e) {
+          prev = null;
+        }
       return prev;
     }
 
     void disable() {
-      if (prev != null)
+      if (prevChooser() != null)
         prev.next = this.next;
-      if (next != null)
+      if (nextChooser() != null)
         next.prev = this.prev;
     }
   }
@@ -93,16 +97,19 @@ public class GenericChooserModel
   public void choose(int pos) {
     if (currentChooser == null) return;
 
-    NavigableChooserNode prevChooser = currentChooser;
+    NavigableChooserNode oldChooser = currentChooser;
     currentChooser = null; // Allows the new subtree to update the current ChooserNode.
+
+    NavigableChooserNode newChooser; // The chooser to make current if the replacement does not introduce a new chooser.
+    if (oldChooser.prevChooser() != null)
+      newChooser = oldChooser.prevChooser().nextChooser();
+    else
+      newChooser = oldChooser.nextChooser();
     
-    prevChooser.action.replaceSubtree(prevChooser.makeChoice(pos));
+    oldChooser.action.replaceSubtree(oldChooser.makeChoice(pos));
     
-    if (currentChooser == null) { // If no ChooserNode has been constructed be the previous line.
-      if (prevChooser.prevChooser() != null)
-        currentChooser = prevChooser.prevChooser().nextChooser();
-      else
-        currentChooser = prevChooser.nextChooser();
+    if (currentChooser == null) { // If no ChooserNode has been constructed by the previous line.
+      currentChooser = newChooser;
       fireChooserChangedEvent(new ChooserChangedEvent(this));
     }
   }

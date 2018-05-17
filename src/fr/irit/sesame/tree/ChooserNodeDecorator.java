@@ -40,12 +40,15 @@ public class ChooserNodeDecorator
     return this.realNode.getParent();
   }
 
+
   public Node nextNode(Node from) throws TraversalException {
-    return this.realNode.nextNode(from);
+    if (from == getParent()) return this;
+    return getParent().nextNode(from);
   }
 
   public Node prevNode(Node from) throws TraversalException {
-    return this.realNode.prevNode(from);
+    if (from == getParent()) return this;
+    return getParent().prevNode(from);
   }
 
   public void addTreeChangedListener(TreeChangedListener listener) {

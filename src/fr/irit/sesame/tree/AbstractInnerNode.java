@@ -14,7 +14,7 @@ public abstract class AbstractInnerNode
   protected int nbChildren;
   protected Node[] children;
 
-  protected AbstractInnerNode(int nbChildren, InnerNode parent) {
+  protected AbstractInnerNode(InnerNode parent, int nbChildren) {
     super(parent);
     this.nbChildren = nbChildren;
     children = new Node[this.nbChildren];
