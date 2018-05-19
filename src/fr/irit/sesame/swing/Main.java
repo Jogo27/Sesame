@@ -2,14 +2,17 @@ package fr.irit.sesame.swing;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -105,12 +108,6 @@ public class Main
     super();
     setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-    textOutput = new JEditorPane();
-    textOutput.setContentType("text/html");
-    textOutput.setEditable(false);
-    textOutput.setFocusable(false);
-    textOutput.setBorder(BorderFactory.createEtchedBorder());
-
     factory = new GenericChooserModel();
     tree = new Tree(factory);
 
@@ -131,6 +128,12 @@ public class Main
     list.setVisibleRowCount(5);
     JScrollPane listScrollPane = new JScrollPane(list);
 
+    textOutput = new JEditorPane();
+    textOutput.setContentType("text/html");
+    textOutput.setEditable(false);
+    textOutput.setFocusable(false);
+    textOutput.setBorder(BorderFactory.createEtchedBorder());
+
     textOutput.setText("<html>"+tree.getText());
     tree.addTreeChangedListener(new TreeChangedListener() {
       public void onTreeChange(TreeChangedEvent event) {
@@ -139,7 +142,32 @@ public class Main
       }
     });
 
-    add(list);
+    // Tool Bar
+    JPanel toolbar = new JPanel();
+    toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.LINE_AXIS));
+
+    JButton prevBut = new JButton("prev");
+    JButton nextBut = new JButton("next");
+    JButton undoBut = new JButton("undo");
+    JButton redoBut = new JButton("redo");
+    JButton clearBut = new JButton("clear");
+
+    toolbar.add(prevBut);
+    toolbar.add(nextBut);
+    toolbar.add(new JSeparator(SwingConstants.VERTICAL));
+    toolbar.add(undoBut);
+    toolbar.add(redoBut);
+    toolbar.add(new JSeparator(SwingConstants.VERTICAL));
+    toolbar.add(clearBut);
+
+    // Left Panel
+    JPanel leftPanel = new JPanel();
+    leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
+    leftPanel.add(toolbar);
+    leftPanel.add(list);
+
+    // Main area
+    add(leftPanel);
     add(textOutput);
   }
 
