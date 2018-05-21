@@ -1,23 +1,26 @@
 package fr.irit.sesame.gwt;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.text.shared.ToStringRenderer;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValuePicker;
-import com.google.gwt.text.shared.ToStringRenderer;
 
+import fr.irit.sesame.lang.Tree;
 import fr.irit.sesame.tree.ChooserChangedEvent;
 import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
 import fr.irit.sesame.tree.GenericChooserModel;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
-import fr.irit.sesame.lang.Tree;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -64,9 +67,26 @@ public class Main implements EntryPoint {
     RootPanel.get("selectorContainer").add(selector);
     RootPanel.get("outputContainer").add(outputLabel);
 
+    // Toolbar
+    final Button prevBut = new Button("prev", new ClickHandler() {
+      public void onClick(ClickEvent evt) {
+        factory.goPrevChooser();
+      }
+    });
+    final Button nextBut = new Button("next", new ClickHandler() {
+      public void onClick(ClickEvent evt) {
+        factory.goNextChooser();
+      }
+    });
+
+    RootPanel.get("prevBut").add(prevBut);
+    RootPanel.get("nextBut").add(nextBut);
+
     ChooserChangedListener chooserListener = new ChooserChangedListener() {
       public void onChooserChange(ChooserChangedEvent event) {
         selector.setAcceptableValues(makeChoices(factory.getChooser()));
+        prevBut.setEnabled(factory.hasPrevChooser());
+        nextBut.setEnabled(factory.hasNextChooser());
       }
     };
     chooserListener.onChooserChange(new ChooserChangedEvent(factory));

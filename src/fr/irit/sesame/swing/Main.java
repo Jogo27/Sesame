@@ -1,7 +1,10 @@
 package fr.irit.sesame.swing;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -106,7 +109,6 @@ public class Main
    */
   private Main() {
     super();
-    setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
     factory = new GenericChooserModel();
     tree = new Tree(factory);
@@ -143,32 +145,75 @@ public class Main
     });
 
     // Tool Bar
-    JPanel toolbar = new JPanel();
-    toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.LINE_AXIS));
-
     JButton prevBut = new JButton("prev");
+    prevBut.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        factory.goPrevChooser();
+      }
+    });
+    prevBut.setEnabled(factory.hasPrevChooser());
+
     JButton nextBut = new JButton("next");
+    nextBut.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        factory.goNextChooser();
+      }
+    });
+    nextBut.setEnabled(factory.hasNextChooser());
+
+    factory.addChooserChangedListener(new ChooserChangedListener() {
+      public void onChooserChange(ChooserChangedEvent evt) {
+        prevBut.setEnabled(factory.hasPrevChooser());
+        nextBut.setEnabled(factory.hasNextChooser());
+      }
+    });
+
+    JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
     JButton undoBut = new JButton("undo");
     JButton redoBut = new JButton("redo");
+    JSeparator sep2 = new JSeparator(SwingConstants.VERTICAL);
     JButton clearBut = new JButton("clear");
 
-    toolbar.add(prevBut);
-    toolbar.add(nextBut);
-    toolbar.add(new JSeparator(SwingConstants.VERTICAL));
-    toolbar.add(undoBut);
-    toolbar.add(redoBut);
-    toolbar.add(new JSeparator(SwingConstants.VERTICAL));
-    toolbar.add(clearBut);
+    // Layout
+    GroupLayout layout = new GroupLayout(this);
+    setLayout(layout);
+    layout.setAutoCreateGaps(true);
+    layout.setAutoCreateContainerGaps(true);
 
-    // Left Panel
-    JPanel leftPanel = new JPanel();
-    leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.PAGE_AXIS));
-    leftPanel.add(toolbar);
-    leftPanel.add(list);
+    layout.setHorizontalGroup(
+      layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+          .addGroup(layout.createSequentialGroup()
+            .addComponent(prevBut)
+            .addComponent(nextBut)
+            .addComponent(sep1, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addComponent(undoBut)
+            .addComponent(redoBut)
+            .addComponent(sep2, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+            .addComponent(clearBut)
+          )
+          .addComponent(list)
+        )
+        .addComponent(textOutput)
+    );
 
-    // Main area
-    add(leftPanel);
-    add(textOutput);
+    layout.setVerticalGroup(
+      layout.createParallelGroup()
+        .addGroup(layout.createSequentialGroup()
+          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE,false)
+            .addComponent(prevBut)
+            .addComponent(nextBut)
+            .addComponent(sep1)
+            .addComponent(undoBut)
+            .addComponent(redoBut)
+            .addComponent(sep2)
+            .addComponent(clearBut)
+          )
+          .addComponent(list)
+        )
+        .addComponent(textOutput)
+    );
+
   }
 
   /**

@@ -8,7 +8,7 @@ import fr.irit.sesame.util.ListenerHandler;
  * ChooserNodeFactory for tests.
  */
 public class GenericChooserModel
-  implements ChooserNodeFactory
+  implements ChooserNodeFactory, TreeChangedListener
 {
 
   /**
@@ -28,17 +28,18 @@ public class GenericChooserModel
       super(node);
       this.action = action;
 
-      this.prev = this; // means unset
-      this.next = this;
+      this.prev = null;
+      this.next = null;
       this.selected = false;
     }
 
     NavigableChooserNode nextChooser() {
-      if (next == this)
+      if ((next == null) || (! next.selected))
         try {
           Node n;
           for (n = this.nextNode(this); !(n instanceof NavigableChooserNode); n = n.nextNode(n)) {}
           next = (NavigableChooserNode) n;
+          next.prev = this;
         } catch (TraversalException e) {
           next = null;
         }
@@ -46,11 +47,12 @@ public class GenericChooserModel
     }
 
     NavigableChooserNode prevChooser() {
-      if (prev == this)
+      if ((prev == null) || (! prev.selected))
         try {
           Node n;
           for (n = this.prevNode(this); !(n instanceof NavigableChooserNode); n = n.prevNode(n)) {}
           prev = (NavigableChooserNode) n;
+          prev.next = this;
         } catch (TraversalException e) {
           prev = null;
         }
@@ -58,9 +60,9 @@ public class GenericChooserModel
     }
 
     void disable() {
-      if (prevChooser() != null)
+      if (prev != null)
         prev.next = this.next;
-      if (nextChooser() != null)
+      if (next != null)
         next.prev = this.prev;
     }
 
@@ -80,17 +82,26 @@ public class GenericChooserModel
 
   // Fields
 
+  private Node root;
   private NavigableChooserNode currentChooser;
   private ListenerHandler<ChooserChangedListener> chooserChangedListeners;
 
   // Constructor
 
   public GenericChooserModel() {
+    root = null;
     currentChooser = null;
     chooserChangedListeners = new ListenerHandler<ChooserChangedListener>();
   }
 
-  // Implements the ChooserNodeFactory interface.
+  public void setTree(Node tree) {
+    if (tree == root) return;
+    if (root != null) root.removeTreeChangedListener(this);
+    root = tree;
+    root.addTreeChangedListener(this);
+  }
+
+  // Implements interface ChooserNodeFactory
 
   public ChooserNode getChooser(ChooserNodeConstructor constructor, ReplaceSubtreeAction replacement)
   {
@@ -98,15 +109,43 @@ public class GenericChooserModel
     if (currentChooser == null) {
       currentChooser = chooser;
       currentChooser.setSelected(true);
-      fireChooserChangedEvent(new ChooserChangedEvent(this));
     }
     return chooser;
+  }
+
+  // Implements interface TreeChangedListener
+
+  public void onTreeChange(TreeChangedEvent evt) {
+    // Currently, any change in the tree corresponds to a change in the GenericChooserModel.
+    fireChooserChangedEvent(new ChooserChangedEvent(evt));
   }
 
   // For the UI.
 
   public ChooserNode getChooser() {
     return currentChooser;
+  }
+
+  public boolean hasPrevChooser() {
+    return (currentChooser != null) && (currentChooser.prevChooser() != null);
+  }
+
+  public boolean hasNextChooser() {
+    return (currentChooser != null) && (currentChooser.nextChooser() != null);
+  }
+
+  public void goPrevChooser() {
+    if (! hasPrevChooser()) return;
+    currentChooser.setSelected(false);
+    currentChooser = currentChooser.prevChooser();
+    currentChooser.setSelected(true);
+  }
+
+  public void goNextChooser() {
+    if (! hasNextChooser()) return;
+    currentChooser.setSelected(false);
+    currentChooser = currentChooser.nextChooser();
+    currentChooser.setSelected(true);
   }
 
   public void choose(int pos) {
@@ -117,10 +156,8 @@ public class GenericChooserModel
     currentChooser = null; // Allows the new subtree to update the current ChooserNode.
 
     NavigableChooserNode newChooser; // The chooser to make current if the replacement does not introduce a new chooser.
-    if (oldChooser.prevChooser() != null)
-      newChooser = oldChooser.prevChooser().nextChooser();
-    else
-      newChooser = oldChooser.nextChooser();
+    newChooser = oldChooser.nextChooser();
+    if (newChooser == null) newChooser = oldChooser.prevChooser();
     
     oldChooser.action.replaceSubtree(oldChooser.makeChoice(pos));
     
@@ -128,7 +165,6 @@ public class GenericChooserModel
       currentChooser = newChooser;
       if (currentChooser != null) //TODO; this is ugly !
         currentChooser.setSelected(true);
-      fireChooserChangedEvent(new ChooserChangedEvent(this));
     }
   }
 
@@ -140,6 +176,8 @@ public class GenericChooserModel
     chooserChangedListeners.remove(listener);
   }
 
+  // Each modification in GenericChooserModel is reflected by at least one change in the tree.
+  // Hence, fireChooserChangedEvent is only called in onTreeChange.
   protected void fireChooserChangedEvent(ChooserChangedEvent event) {
     for (ChooserChangedListener listener : chooserChangedListeners)
       listener.onChooserChange(event);

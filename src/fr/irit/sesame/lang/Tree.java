@@ -18,6 +18,7 @@ public class Tree
   public Tree(ChooserNodeFactory factory) {
     super(null, 1);
     this.factory = factory;
+    factory.setTree(this);
     initChooser(0, PrincipleChooser.constructor);
   }
 
