@@ -26,6 +26,7 @@
   <source path='gwt'/>
   <source path='tree'/>
   <source path='lang'/>
+  <source path='ui'/>
   <source path='util'/>
 
   <!-- allow Super Dev Mode -->

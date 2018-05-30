@@ -26,9 +26,12 @@ import fr.irit.sesame.lang.Tree;
 import fr.irit.sesame.tree.ChooserChangedEvent;
 import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.GenericChooserModel;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
+import fr.irit.sesame.ui.GenericChooserModel;
+import fr.irit.sesame.ui.GenericUndoManager;
+import fr.irit.sesame.ui.UndoManagerChangedEvent;
+import fr.irit.sesame.ui.UndoManagerChangedListener;
 import fr.irit.sesame.util.ListenerHandler;
 
 public class Main 
@@ -70,20 +73,17 @@ public class Main
       int newSize = getCurrentSize();
 
       if (newSize > curSize) {
-        System.out.println("ADDED " + curSize + "-" + (newSize - 1));
         event = new ListDataEvent(source, ListDataEvent.INTERVAL_ADDED, curSize, newSize - 1);
         for (ListDataListener listener : handler)
           listener.intervalAdded(event);
 
       } else if (newSize < curSize) {
-        System.out.println("REMOVED " + newSize + "-" + (curSize - 1));
         event = new ListDataEvent(source, ListDataEvent.INTERVAL_REMOVED, newSize, curSize - 1);
         for (ListDataListener listener : handler)
           listener.intervalRemoved(event);
       }
 
       if (newSize > 0) {
-        System.out.println("CHANGED 0-" + (newSize - 1));
         event = new ListDataEvent(source, ListDataEvent.CONTENTS_CHANGED, 0, newSize - 1);
         for (ListDataListener listener : handler)
           listener.contentsChanged(event);
@@ -144,6 +144,10 @@ public class Main
       }
     });
 
+    // Undo
+    GenericUndoManager undoManager = new GenericUndoManager();
+    factory.addUndoRedoListener(undoManager);
+
     // Tool Bar
     JButton prevBut = new JButton("prev");
     prevBut.addActionListener(new ActionListener() {
@@ -169,8 +173,30 @@ public class Main
     });
 
     JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
+
     JButton undoBut = new JButton("undo");
+    undoBut.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        undoManager.undo();
+      }
+    });
+    undoBut.setEnabled(undoManager.canUndo());
+
     JButton redoBut = new JButton("redo");
+    redoBut.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent evt) {
+        undoManager.redo();
+      }
+    });
+    redoBut.setEnabled(undoManager.canRedo());
+
+    undoManager.addUndoManagerChangedListener(new UndoManagerChangedListener() {
+      public void onUndoManagerChange(UndoManagerChangedEvent event) {
+        undoBut.setEnabled(undoManager.canUndo());
+        redoBut.setEnabled(undoManager.canRedo());
+      }
+    });
+
     JSeparator sep2 = new JSeparator(SwingConstants.VERTICAL);
     JButton clearBut = new JButton("clear");
 

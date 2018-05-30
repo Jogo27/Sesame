@@ -18,9 +18,9 @@ import fr.irit.sesame.lang.Tree;
 import fr.irit.sesame.tree.ChooserChangedEvent;
 import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.GenericChooserModel;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
+import fr.irit.sesame.ui.GenericChooserModel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
