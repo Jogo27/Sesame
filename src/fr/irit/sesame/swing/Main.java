@@ -73,17 +73,20 @@ public class Main
       int newSize = getCurrentSize();
 
       if (newSize > curSize) {
+        System.out.println("ADDED " + curSize + "-" + (newSize - 1));
         event = new ListDataEvent(source, ListDataEvent.INTERVAL_ADDED, curSize, newSize - 1);
         for (ListDataListener listener : handler)
           listener.intervalAdded(event);
 
       } else if (newSize < curSize) {
+        System.out.println("REMOVED " + newSize + "-" + (curSize - 1));
         event = new ListDataEvent(source, ListDataEvent.INTERVAL_REMOVED, newSize, curSize - 1);
         for (ListDataListener listener : handler)
           listener.intervalRemoved(event);
       }
 
       if (newSize > 0) {
+        System.out.println("CHANGED 0-" + (newSize - 1));
         event = new ListDataEvent(source, ListDataEvent.CONTENTS_CHANGED, 0, newSize - 1);
         for (ListDataListener listener : handler)
           listener.contentsChanged(event);
@@ -111,10 +114,11 @@ public class Main
     super();
 
     factory = new GenericChooserModel();
-    tree = new Tree(factory);
 
     MyListModel listModel = new MyListModel();
     factory.addChooserChangedListener(listModel);
+
+    tree = new Tree(factory);
 
     list = new JList<String>(listModel);
     list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

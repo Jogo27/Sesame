@@ -7,19 +7,27 @@ public class UndoReplaceSubtreeAction
   extends AbstractUndoRedoAction
 {
 
-  protected Node oldSubtree;
+  protected Node altSubtree;
   protected ReplaceSubtreeAction action;
 
-  public UndoReplaceSubtreeAction(ReplaceSubtreeAction action, Node oldSubtree) {
-    super();
+  /**
+   * Constructor.
+   * @param altSubtree The subtree that is NOT currently in the main tree.
+   */
+  public UndoReplaceSubtreeAction(boolean hasBeenDone, ReplaceSubtreeAction action, Node altSubtree) {
+    super(hasBeenDone);
     this.action = action;
-    this.oldSubtree = oldSubtree;
+    this.altSubtree = altSubtree;
+  }
+
+  public UndoReplaceSubtreeAction(ReplaceSubtreeAction action, Node altSubtree) {
+    this(true, action, altSubtree);
   }
 
   private void act() {
     Node tmpNode = action.currentSubtree();
-    action.replaceSubtree(oldSubtree);
-    oldSubtree = tmpNode;
+    action.replaceSubtree(altSubtree);
+    altSubtree = tmpNode;
   }
 
   @Override
