@@ -11,7 +11,7 @@
     <!--                                                               -->
     <!-- Consider inlining CSS to reduce the number of requested files -->
     <!--                                                               -->
-    <link type="text/css" rel="stylesheet" href="selectorTest.css">
+    <link type="text/css" rel="stylesheet" href="Main.css">
 
     <!--                                           -->
     <!-- Any title is fine                         -->
@@ -43,16 +43,14 @@
 
     <h1>Sesame</h1>
 
-    <table align="center">
-      <tr>
-        <td id="prevBut"></td>
-        <td id="nextBut"></td>
-        <td id="undoBut"></td>
-        <td id="redoBut"></td>
+    <table id="application" align="center">
+      <tr id="toolbar">
+        <td id="navigation"></td>
+        <td id="undoredo"></td>
         <td id="clearBut"></td>
         <td id="outputContainer" rowspan=2></td>
       </tr><tr>
-        <td id="selectorContainer" colspan=5></td>
+        <td id="selectorContainer" colspan=3></td>
     </tr></table>
 
   </body>

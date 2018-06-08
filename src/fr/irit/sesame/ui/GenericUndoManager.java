@@ -6,7 +6,7 @@ import java.util.List;
 import fr.irit.sesame.util.ListenerHandler;
 
 public class GenericUndoManager
-  implements UndoRedoListener
+  implements UndoRedoManager
 {
 
   protected List<UndoRedoAction> stack;

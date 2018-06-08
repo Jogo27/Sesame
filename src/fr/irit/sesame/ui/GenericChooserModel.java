@@ -2,8 +2,6 @@ package fr.irit.sesame.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
-import fr.irit.sesame.tree.ChooserChangedEvent;
-import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
 import fr.irit.sesame.tree.ChooserNodeConstructor;
 import fr.irit.sesame.tree.ChooserNodeDecorator;

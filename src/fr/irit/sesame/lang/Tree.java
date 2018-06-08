@@ -5,6 +5,7 @@ import fr.irit.sesame.tree.ChooserNodeFactory;
 import fr.irit.sesame.tree.Node;
 import fr.irit.sesame.tree.OutOfTreeException;
 import fr.irit.sesame.tree.TraversalException;
+import fr.irit.sesame.tree.TreeConstructor;
 
 /**
  * A syntactic tree denoting a semantics.
@@ -13,6 +14,7 @@ import fr.irit.sesame.tree.TraversalException;
 public class Tree
   extends AbstractInnerNode
 {
+  // TODO: write an abstract class in the tree package.
 
   private ChooserNodeFactory factory;
 
@@ -20,8 +22,12 @@ public class Tree
     super(null, 1);
     this.factory = factory;
     initChooser(0, PrincipleChooser.constructor);
-    factory.setTree(this);
   }
+
+  static private class Constructor implements TreeConstructor {
+    public Node makeRoot(ChooserNodeFactory factory) { return new Tree(factory); }
+  }
+  static public TreeConstructor constructor = new Constructor();
 
   @Override
   public ChooserNodeFactory getFactory() {

@@ -3,7 +3,6 @@ package fr.irit.sesame.swing;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -13,98 +12,29 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import fr.irit.sesame.lang.Tree;
-import fr.irit.sesame.tree.ChooserChangedEvent;
-import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.TreeChangedEvent;
-import fr.irit.sesame.tree.TreeChangedListener;
-import fr.irit.sesame.ui.GenericChooserModel;
-import fr.irit.sesame.ui.GenericUndoManager;
-import fr.irit.sesame.ui.UndoManagerChangedEvent;
-import fr.irit.sesame.ui.UndoManagerChangedListener;
-import fr.irit.sesame.util.ListenerHandler;
+import fr.irit.sesame.ui.Application;
+import fr.irit.sesame.util.EnumRevMap;
+import fr.irit.sesame.util.ValueNotFoundException;
+
 
 public class Main 
   extends JPanel
+  implements Application.View, ListSelectionListener, ActionListener
 {
-  private GenericChooserModel factory;
-  private Tree tree;
-  
-  private JList<String> list;
+
+  private EnumRevMap<Application.ButtonId, JButton> buttons;
+  private JList<String> chooserList;
+  private ChooserListModel chooserListModel;
   private JEditorPane textOutput;
 
-  private class MyListModel implements ListModel<String>, ChooserChangedListener  {
-
-    private ListenerHandler<ListDataListener> handler;
-    private int curSize;
-
-    MyListModel() {
-      handler = new ListenerHandler<ListDataListener>();
-      curSize = getCurrentSize();
-    }
-
-    private int getCurrentSize() {
-      if (factory == null) return 0;
-      ChooserNode chooser = factory.getChooser();
-      if (chooser == null) return 0;
-      return chooser.getNbChoices();
-    }
-
-    public void addListDataListener(ListDataListener l) {
-      handler.add(l);
-    }
-
-    public void removeListDataListener(ListDataListener l) {
-      handler.remove(l);
-    }
-
-    public void onChooserChange(ChooserChangedEvent source) {
-      ListDataEvent event;
-      int newSize = getCurrentSize();
-
-      if (newSize > curSize) {
-        System.out.println("ADDED " + curSize + "-" + (newSize - 1));
-        event = new ListDataEvent(source, ListDataEvent.INTERVAL_ADDED, curSize, newSize - 1);
-        for (ListDataListener listener : handler)
-          listener.intervalAdded(event);
-
-      } else if (newSize < curSize) {
-        System.out.println("REMOVED " + newSize + "-" + (curSize - 1));
-        event = new ListDataEvent(source, ListDataEvent.INTERVAL_REMOVED, newSize, curSize - 1);
-        for (ListDataListener listener : handler)
-          listener.intervalRemoved(event);
-      }
-
-      if (newSize > 0) {
-        System.out.println("CHANGED 0-" + (newSize - 1));
-        event = new ListDataEvent(source, ListDataEvent.CONTENTS_CHANGED, 0, newSize - 1);
-        for (ListDataListener listener : handler)
-          listener.contentsChanged(event);
-      }
-
-      curSize = newSize;
-    }
-
-    public int getSize() {
-      return curSize;
-    }
-
-    public String getElementAt(int index) {
-      ChooserNode chooser = factory.getChooser();
-      if (chooser == null) return "---";
-      return chooser.getChoice(index);
-    }
-  }
+  private Application application;
 
 
   /**
@@ -113,26 +43,12 @@ public class Main
   private Main() {
     super();
 
-    factory = new GenericChooserModel();
-
-    MyListModel listModel = new MyListModel();
-    factory.addChooserChangedListener(listModel);
-
-    tree = new Tree(factory);
-
-    list = new JList<String>(listModel);
-    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    list.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (!e.getValueIsAdjusting()) {
-          int index = list.getSelectedIndex();
-          if (index >= 0)
-            factory.choose(index);
-        }
-      }
-    });
-    list.setVisibleRowCount(5);
-    JScrollPane listScrollPane = new JScrollPane(list);
+    chooserListModel = new ChooserListModel();
+    chooserList = new JList<String>(chooserListModel);
+    chooserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    chooserList.addListSelectionListener(this);
+    chooserList.setVisibleRowCount(5);
+    JScrollPane listScrollPane = new JScrollPane(chooserList);
 
     textOutput = new JEditorPane();
     textOutput.setContentType("text/html");
@@ -140,68 +56,19 @@ public class Main
     textOutput.setFocusable(false);
     textOutput.setBorder(BorderFactory.createEtchedBorder());
 
-    textOutput.setText("<html>"+tree.getText());
-    tree.addTreeChangedListener(new TreeChangedListener() {
-      public void onTreeChange(TreeChangedEvent event) {
-        list.clearSelection();
-        textOutput.setText("<html>"+tree.getText());
-      }
-    });
+    // Toolbar
 
-    // Undo
-    GenericUndoManager undoManager = new GenericUndoManager();
-    factory.addUndoRedoListener(undoManager);
+    buttons = new EnumRevMap<Application.ButtonId,JButton>(Application.ButtonId.class);
 
-    // Tool Bar
-    JButton prevBut = new JButton("prev");
-    prevBut.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        factory.goPrevChooser();
-      }
-    });
-    prevBut.setEnabled(factory.hasPrevChooser());
-
-    JButton nextBut = new JButton("next");
-    nextBut.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        factory.goNextChooser();
-      }
-    });
-    nextBut.setEnabled(factory.hasNextChooser());
-
-    factory.addChooserChangedListener(new ChooserChangedListener() {
-      public void onChooserChange(ChooserChangedEvent evt) {
-        prevBut.setEnabled(factory.hasPrevChooser());
-        nextBut.setEnabled(factory.hasNextChooser());
-      }
-    });
+    JButton prevBut = newButton(Application.ButtonId.BUT_PREV, "prev");
+    JButton nextBut = newButton(Application.ButtonId.BUT_NEXT, "next");
 
     JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
 
-    JButton undoBut = new JButton("undo");
-    undoBut.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        undoManager.undo();
-      }
-    });
-    undoBut.setEnabled(undoManager.canUndo());
-
-    JButton redoBut = new JButton("redo");
-    redoBut.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        undoManager.redo();
-      }
-    });
-    redoBut.setEnabled(undoManager.canRedo());
-
-    undoManager.addUndoManagerChangedListener(new UndoManagerChangedListener() {
-      public void onUndoManagerChange(UndoManagerChangedEvent event) {
-        undoBut.setEnabled(undoManager.canUndo());
-        redoBut.setEnabled(undoManager.canRedo());
-      }
-    });
-
+    JButton undoBut = newButton(Application.ButtonId.BUT_UNDO, "undo");
+    JButton redoBut = newButton(Application.ButtonId.BUT_REDO, "redo");
     JSeparator sep2 = new JSeparator(SwingConstants.VERTICAL);
+
     JButton clearBut = new JButton("clear");
 
     // Layout
@@ -222,7 +89,7 @@ public class Main
             .addComponent(sep2, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
             .addComponent(clearBut)
           )
-          .addComponent(list)
+          .addComponent(chooserList)
         )
         .addComponent(textOutput)
     );
@@ -239,11 +106,58 @@ public class Main
             .addComponent(sep2)
             .addComponent(clearBut)
           )
-          .addComponent(list)
+          .addComponent(chooserList)
         )
         .addComponent(textOutput)
     );
 
+    // Launch
+    application = new Application(this);
+
+  }
+
+  // Chooser
+
+  public void valueChanged(ListSelectionEvent e) {
+    if (!e.getValueIsAdjusting()) {
+      int index = chooserList.getSelectedIndex();
+      if (index >= 0) {
+        application.choose(index);
+        chooserList.clearSelection();
+      }
+    }
+  }
+
+  public void setChooser(ChooserNode chooser) {
+    chooserListModel.setChooser(chooser);
+  }
+
+  // Buttons
+
+  private JButton newButton(Application.ButtonId id, String label) {
+    JButton button = new JButton(label);
+    buttons.put(id, button);
+    button.addActionListener(this);
+    return button;
+  }
+
+  public void actionPerformed(ActionEvent evt) {
+    try {
+      application.clickButton(buttons.getKey( (JButton) evt.getSource() ));
+    }
+    catch (ValueNotFoundException exc) {
+      throw new AssertionError("Click on unknown button", exc);
+    }
+  }
+
+  public void setButtonEnabled(Application.ButtonId id, boolean enabled) {
+    buttons.get(id).setEnabled(enabled);
+  }
+
+  // Natural language output
+
+  public void setNaturalLanguage(String descr) {
+    textOutput.setText(descr);
   }
 
   /**

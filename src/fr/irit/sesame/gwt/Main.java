@@ -14,21 +14,26 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValuePicker;
 
-import fr.irit.sesame.lang.Tree;
-import fr.irit.sesame.tree.ChooserChangedEvent;
-import fr.irit.sesame.tree.ChooserChangedListener;
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.TreeChangedEvent;
-import fr.irit.sesame.tree.TreeChangedListener;
-import fr.irit.sesame.ui.GenericChooserModel;
+import fr.irit.sesame.ui.Application;
+import fr.irit.sesame.util.EnumRevMap;
+import fr.irit.sesame.util.ValueNotFoundException;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class Main implements EntryPoint {
+public class Main
+  implements EntryPoint, Application.View, ClickHandler, ValueChangeHandler<Main.Choice>
+{
+
+  private EnumRevMap<Application.ButtonId,Button> buttons = new EnumRevMap<Application.ButtonId,Button>(Application.ButtonId.class);
+  private ValuePicker<Choice> chooserList = new ValuePicker<Choice>(new ToStringRenderer("-null error-"));
+  private HTML textOutput = new HTML();
+
+  private Application application = null;
 
   // Could be made its own class.
-  static private class Choice {
+  static class Choice {
     int id;
     String text;
 
@@ -42,6 +47,35 @@ public class Main implements EntryPoint {
     }
   }
 
+  /**
+   * This is the entry point method.
+   */
+  public void onModuleLoad() {
+
+    RootPanel.get("selectorContainer").add(chooserList);
+    chooserList.addValueChangeHandler(this);
+
+    RootPanel.get("outputContainer").add(textOutput);
+
+    // Toolbar
+    newButton(Application.ButtonId.BUT_PREV, "prev", "navigation");
+    newButton(Application.ButtonId.BUT_NEXT, "next", "navigation");
+    newButton(Application.ButtonId.BUT_UNDO, "undo", "undoredo");
+    newButton(Application.ButtonId.BUT_REDO, "redo", "undoredo");
+
+    application = new Application(this);
+  }
+
+  // Chooser
+
+  public void onValueChange(ValueChangeEvent<Choice> event) {
+    application.choose(event.getValue().id);
+  }
+
+  public void setChooser(ChooserNode chooser) {
+    chooserList.setAcceptableValues(makeChoices(chooser));
+  }
+
   static private Collection<Choice> makeChoices(ChooserNode node) {
     if (node == null)
       return new ArrayList<Choice>(0);
@@ -52,58 +86,31 @@ public class Main implements EntryPoint {
     return ret;
   }
 
-  /**
-   * This is the entry point method.
-   */
-  public void onModuleLoad() {
-    final ValuePicker<Choice> selector = new ValuePicker<Choice>(new ToStringRenderer("-null error-"));
-    final HTML outputLabel = new HTML();
+  // Buttons
 
-    final GenericChooserModel factory = new GenericChooserModel();
-    final Tree tree = new Tree(factory);
-
-    // Add the nameField and sendButton to the RootPanel
-    // Use RootPanel.get() to get the entire body element
-    RootPanel.get("selectorContainer").add(selector);
-    RootPanel.get("outputContainer").add(outputLabel);
-
-    // Toolbar
-    final Button prevBut = new Button("prev", new ClickHandler() {
-      public void onClick(ClickEvent evt) {
-        factory.goPrevChooser();
-      }
-    });
-    final Button nextBut = new Button("next", new ClickHandler() {
-      public void onClick(ClickEvent evt) {
-        factory.goNextChooser();
-      }
-    });
-
-    RootPanel.get("prevBut").add(prevBut);
-    RootPanel.get("nextBut").add(nextBut);
-
-    ChooserChangedListener chooserListener = new ChooserChangedListener() {
-      public void onChooserChange(ChooserChangedEvent event) {
-        selector.setAcceptableValues(makeChoices(factory.getChooser()));
-        prevBut.setEnabled(factory.hasPrevChooser());
-        nextBut.setEnabled(factory.hasNextChooser());
-      }
-    };
-    chooserListener.onChooserChange(new ChooserChangedEvent(factory));
-    factory.addChooserChangedListener(chooserListener);
-
-    TreeChangedListener treeListener = new TreeChangedListener() {
-      public void onTreeChange(TreeChangedEvent source) {
-        outputLabel.setHTML(tree.getText());
-      }
-    };
-    treeListener.onTreeChange(new TreeChangedEvent(tree));
-    tree.addTreeChangedListener(treeListener);
-
-    selector.addValueChangeHandler(new ValueChangeHandler<Choice>() {
-      public void onValueChange(ValueChangeEvent<Choice> event) {
-        factory.choose(event.getValue().id);
-      }
-    });
+  private void newButton(Application.ButtonId id, String label, String domContainer) {
+    Button button = new Button(label, this);
+    RootPanel.get(domContainer).add(button);
+    buttons.put(id, button);
   }
+
+  public void onClick(ClickEvent evt) {
+    try {
+      application.clickButton(buttons.getKey( (Button) evt.getSource() ));
+    }
+    catch (ValueNotFoundException exc) {
+      throw new AssertionError("Click on unknown button", exc);
+    }
+  }
+
+  public void setButtonEnabled(Application.ButtonId id, boolean enabled) {
+    buttons.get(id).setEnabled(enabled);
+  }
+
+  // Natural language output
+  
+  public void setNaturalLanguage(String descr) {
+    textOutput.setHTML(descr);
+  }
+
 }

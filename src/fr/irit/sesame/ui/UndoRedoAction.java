@@ -1,6 +1,8 @@
 package fr.irit.sesame.ui;
 
-public interface UndoRedoAction {
+public interface UndoRedoAction
+  extends UndoRedoable
+{
 
   boolean canUndo();
   void    undo();
