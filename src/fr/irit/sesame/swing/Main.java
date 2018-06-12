@@ -69,7 +69,7 @@ public class Main
     JButton redoBut = newButton(Application.ButtonId.BUT_REDO, "redo");
     JSeparator sep2 = new JSeparator(SwingConstants.VERTICAL);
 
-    JButton clearBut = new JButton("clear");
+    JButton clearBut = newButton(Application.ButtonId.BUT_CLEAR, "clear");
 
     // Layout
     GroupLayout layout = new GroupLayout(this);
