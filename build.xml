@@ -28,8 +28,7 @@
   <!-- Arguments to gwtc and devmode targets -->
   <property name="gwt.args" value="-strict" />
 
-  <!-- Configure path to GWT SDK -->
-  <property name="gwt.sdk" location="/home/jogo/sesame/gwt-2.8.2" />
+  <property name="gwt.sdk" location="libs/gwt" />
 
   <path id="project.class.path">
     <pathelement location="war/WEB-INF/classes"/>
