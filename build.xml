@@ -1,19 +1,27 @@
-<project name="sesame" default="swt-java" basedir=".">
+<project name="sesame" default="swing-java" basedir=".">
 
   <property name="src" location="src"/>
   <property name="build" location="build"/>
 
-  <target name="swt-init">
+  <target name="swing-init">
     <tstamp/>
     <mkdir dir="${build}"/>
   </target>
 
-  <target name="swt-java" depends="swt-init" description="compile the source ">
+  <target name="swing-java" depends="swing-init" description="compile the source ">
     <javac srcdir="${src}" excludes="**/gwt/*" destdir="${build}"
       includeantruntime="false" debug="true">
       <compilerarg value="-Xlint:unchecked"/>
       <compilerarg value="-Xdiags:verbose"/>
     </javac>
+  </target>
+
+  <target name="swing-jar" depends="swing-java" description="create the jar">
+    <jar destfile="sesame.jar" basedir="${build}" excludes="**/gwt/*">
+      <manifest>
+        <attribute name="Main-Class" value="fr.irit.sesame.swing.Main"/>
+      </manifest>
+    </jar>
   </target>
 
 
