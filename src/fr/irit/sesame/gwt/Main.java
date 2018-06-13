@@ -62,6 +62,7 @@ public class Main
     newButton(Application.ButtonId.BUT_NEXT, "next", "navigation");
     newButton(Application.ButtonId.BUT_UNDO, "undo", "undoredo");
     newButton(Application.ButtonId.BUT_REDO, "redo", "undoredo");
+    newButton(Application.ButtonId.BUT_CLEAR, "clear", "clearBut");
 
     application = new Application(this);
   }

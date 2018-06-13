@@ -3,6 +3,7 @@ package fr.irit.sesame.ui;
 import fr.irit.sesame.lang.Tree;
 import fr.irit.sesame.tree.ChooserNode;
 import fr.irit.sesame.tree.Node;
+import fr.irit.sesame.tree.TraversalException;
 import fr.irit.sesame.tree.TreeChangedEvent;
 import fr.irit.sesame.tree.TreeChangedListener;
 import fr.irit.sesame.tree.TreeConstructor;
@@ -15,8 +16,8 @@ public class Application
     BUT_PREV,
     BUT_NEXT,
     BUT_UNDO,
-    BUT_REDO;
-//    BUT_CLEAR
+    BUT_REDO,
+    BUT_CLEAR;
   }
 
   // View
@@ -34,6 +35,7 @@ public class Application
   // Fields
   
   private View view;
+  private TreeConstructor treeConstructor;
   private Node tree;
   private UndoRedoManager undoManager;
   private GenericChooserModel chooserModel;
@@ -50,19 +52,27 @@ public class Application
 
   public Application(View view, TreeConstructor treeConstructor, UndoRedoManager undoManager) {
     this.view = view;
+    this.treeConstructor = treeConstructor;
+
+    this.undoManager = undoManager;
+    undoManager.addUndoManagerChangedListener(this);
+    updatedUndoRedo();
+
+    initTreeAndChooserModel();
+  }
+
+  private void initTreeAndChooserModel() {
     this.chooserModel = new GenericChooserModel();
     this.tree = treeConstructor.makeRoot(chooserModel);
-    this.undoManager = undoManager;
 
     tree.addTreeChangedListener(this);
     chooserModel.addChooserChangedListener(this);
     chooserModel.addUndoRedoListener(undoManager);
-    undoManager.addUndoManagerChangedListener(this);
-    chooserModel.setTree(tree);
 
+    chooserModel.setTree(tree);
     updatedTree();
     updatedChooser();
-    updatedUndoRedo();
+    view.setButtonEnabled(ButtonId.BUT_CLEAR, false);
   }
 
   // Controls
@@ -71,14 +81,72 @@ public class Application
     switch (button) {
       case BUT_PREV: chooserModel.goPrevChooser(); break;
       case BUT_NEXT: chooserModel.goNextChooser(); break;
-      case BUT_UNDO: undoManager.undo(); break;
-      case BUT_REDO: undoManager.redo(); break;
+      case BUT_UNDO: undoManager.undo(); updateClearButton(); break;
+      case BUT_REDO: undoManager.redo(); updateClearButton(); break;
+      case BUT_CLEAR: clear(); break;
       default: throw new AssertionError("Unknown button ID");
+    }
+  }
+
+  private void updateClearButton() {
+    try {
+      view.setButtonEnabled(ButtonId.BUT_CLEAR, tree.nextNode(tree) != chooserModel.getChooser());
+    }
+    catch (TraversalException e) {
+      throw new AssertionError("Empty tree");
     }
   }
 
   public void choose(int id) {
     chooserModel.choose(id);
+    view.setButtonEnabled(ButtonId.BUT_CLEAR, true);
+  }
+
+  // Clean action
+
+  private final class ClearAction extends AbstractUndoRedoAction {
+
+    private Node tree;
+    private GenericChooserModel chooserModel;
+
+    ClearAction(Node oldTree, GenericChooserModel oldChooserModel) {
+      super(true);
+      this.tree = oldTree;
+      this.chooserModel = oldChooserModel;
+    }
+
+    public boolean isSignificant() { return true; }
+
+    @Override
+    public void undo() throws CannotUndoRedoException {
+      super.undo();
+      act();
+    }
+
+    @Override
+    public void redo() throws CannotUndoRedoException {
+      super.redo();
+      act();
+    }
+
+
+    private void act() {
+      Node oldTree = Application.this.tree;
+      GenericChooserModel oldChooserModel = Application.this.chooserModel;
+      Application.this.tree = this.tree;
+      Application.this.chooserModel = this.chooserModel;
+      this.tree = oldTree;
+      this.chooserModel = oldChooserModel;
+
+      Application.this.updatedTree();
+      Application.this.updatedChooser();
+    }
+  }
+
+  private void clear() {
+    ClearAction action = new ClearAction(tree, chooserModel);
+    initTreeAndChooserModel();
+    undoManager.undoableActionHappened(action);
   }
 
   // Implements listener interfaces
