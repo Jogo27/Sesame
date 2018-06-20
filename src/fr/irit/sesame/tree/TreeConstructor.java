@@ -1,5 +1,5 @@
 package fr.irit.sesame.tree;
 
 public interface TreeConstructor {
-  Node makeRoot(ChooserNodeFactory factory);
+  Node makeRoot(ChooserNodeManager factory);
 }

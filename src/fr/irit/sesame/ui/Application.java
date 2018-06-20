@@ -38,7 +38,7 @@ public class Application
   private TreeConstructor treeConstructor;
   private Node tree;
   private UndoRedoManager undoManager;
-  private GenericChooserModel chooserModel;
+  private ChooserModel chooserModel;
 
   // Constructors
   
@@ -62,7 +62,7 @@ public class Application
   }
 
   private void initTreeAndChooserModel() {
-    this.chooserModel = new GenericChooserModel();
+    this.chooserModel = new ChooserModel();
     this.tree = treeConstructor.makeRoot(chooserModel);
 
     tree.addTreeChangedListener(this);
@@ -107,9 +107,9 @@ public class Application
   private final class ClearAction extends AbstractUndoRedoAction {
 
     private Node tree;
-    private GenericChooserModel chooserModel;
+    private ChooserModel chooserModel;
 
-    ClearAction(Node oldTree, GenericChooserModel oldChooserModel) {
+    ClearAction(Node oldTree, ChooserModel oldChooserModel) {
       super(true);
       this.tree = oldTree;
       this.chooserModel = oldChooserModel;
@@ -132,7 +132,7 @@ public class Application
 
     private void act() {
       Node oldTree = Application.this.tree;
-      GenericChooserModel oldChooserModel = Application.this.chooserModel;
+      ChooserModel oldChooserModel = Application.this.chooserModel;
       Application.this.tree = this.tree;
       Application.this.chooserModel = this.chooserModel;
       this.tree = oldTree;

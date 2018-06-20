@@ -1,11 +1,17 @@
 package fr.irit.sesame.tree;
 
-//TODO check whether the abstract class could be enough.
-
+/**
+ * Each Node should have a static field of type NodeConstructor.
+ * This is needed because GWT does not implements the full reflection API.
+ */
 public interface NodeConstructor {
 
   String getDescription();
 
-  Node makeNode(InnerNode parent);
+  /**
+   * Create a node.
+   * Parameter <code>replaceAction</code> could be ignored by non-chooser nodes.
+   */
+  Node makeNode(InnerNode parent, ReplaceSubtreeAction replaceAction);
 
 }

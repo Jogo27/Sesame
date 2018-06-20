@@ -3,16 +3,24 @@ package fr.irit.sesame.tree;
 /**
  * A simple LeafNode with constant associated text.
  */
-public class ConstantLeafNode extends AbstractLeafNode {
+public class ConstantLeafNode
+  extends AbstractLeafNode
+{
 
   static public class Constructor
-    extends AbstractNode.Constructor
+      implements NodeConstructor
   {
-    public Constructor(String text) {
-      super(text);
+    private String description;
+
+    public Constructor(String description) {
+      this.description = description;
     }
 
-    public Node makeNode(InnerNode parent) {
+    public String getDescription() {
+      return description;
+    }
+
+    public Node makeNode(InnerNode parent, ReplaceSubtreeAction action) {
       return new ConstantLeafNode(parent, description);
     }
   }

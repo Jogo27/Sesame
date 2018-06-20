@@ -28,6 +28,10 @@ public class ChooserNodeDecorator
     return this.realNode.makeChoice(pos);
   }
 
+  public ReplaceSubtreeAction getReplacementAction() {
+    return this.realNode.getReplacementAction();
+  }
+
 
   // Implements Node
   
@@ -35,7 +39,7 @@ public class ChooserNodeDecorator
     return this.realNode.getText();
   }
 
-  public ChooserNodeFactory getFactory() {
+  public ChooserNodeManager getFactory() {
     return this.realNode.getFactory();
   }
 

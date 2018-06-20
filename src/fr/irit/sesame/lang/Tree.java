@@ -1,7 +1,7 @@
 package fr.irit.sesame.lang;
 
 import fr.irit.sesame.tree.AbstractInnerNode;
-import fr.irit.sesame.tree.ChooserNodeFactory;
+import fr.irit.sesame.tree.ChooserNodeManager;
 import fr.irit.sesame.tree.Node;
 import fr.irit.sesame.tree.OutOfTreeException;
 import fr.irit.sesame.tree.TraversalException;
@@ -16,21 +16,21 @@ public class Tree
 {
   // TODO: write an abstract class in the tree package.
 
-  private ChooserNodeFactory factory;
+  private ChooserNodeManager factory;
 
-  public Tree(ChooserNodeFactory factory) {
+  public Tree(ChooserNodeManager factory) {
     super(null, 1);
     this.factory = factory;
-    initChooser(0, PrincipleChooser.constructor);
+    initBranch(0, PrincipleChooser.constructor);
   }
 
   static private class Constructor implements TreeConstructor {
-    public Node makeRoot(ChooserNodeFactory factory) { return new Tree(factory); }
+    public Node makeRoot(ChooserNodeManager factory) { return new Tree(factory); }
   }
   static public TreeConstructor constructor = new Constructor();
 
   @Override
-  public ChooserNodeFactory getFactory() {
+  public ChooserNodeManager getFactory() {
     return factory;
   }
 

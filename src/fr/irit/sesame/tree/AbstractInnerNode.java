@@ -33,9 +33,9 @@ public abstract class AbstractInnerNode
    * Attach a new chooser as child.
    * To be used in subclasses' constructors.
    */
-  protected void initChooser(final int pos, ChooserNodeConstructor constructor)
+  protected void initBranch(final int pos, NodeConstructor constructor)
   {
-    ChooserNode chooser = getFactory().getChooser(constructor,
+    Node branch = constructor.makeNode(this,
         new ReplaceSubtreeAction() {
           public InnerNode getParentNode() { return AbstractInnerNode.this; }
           public Node currentSubtree() { return children[pos]; }
@@ -45,7 +45,7 @@ public abstract class AbstractInnerNode
             fireTreeChangedEvent(new TreeChangedEvent(AbstractInnerNode.this));
           }
         });
-    attachSubtree(pos, chooser);
+    attachSubtree(pos, branch);
   }
 
   public Node nextNode(Node from) throws TraversalException {
