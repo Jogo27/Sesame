@@ -13,9 +13,9 @@ public class AndNode
   // Constructors
   
   private AndNode(InnerNode parent) {
-    super(parent, 2);
-    initBranch(0, PrincipleChooser.constructor);
-    initBranch(1, PrincipleChooser.constructor);
+    super(parent,
+        PrincipleChooser.constructor,
+        PrincipleChooser.constructor);
   }
 
   static private class Constructor implements NodeConstructor {

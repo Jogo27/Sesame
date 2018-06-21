@@ -29,8 +29,8 @@ public abstract class AbstractNode
     return parent;
   }
 
-  public ChooserNodeManager getFactory() {
-    return getParent().getFactory();
+  public ChooserNodeManager getChooserNodeManager() {
+    return getParent().getChooserNodeManager();
   }
 
 }

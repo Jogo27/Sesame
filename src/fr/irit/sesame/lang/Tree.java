@@ -16,22 +16,22 @@ public class Tree
 {
   // TODO: write an abstract class in the tree package.
 
-  private ChooserNodeManager factory;
+  private ChooserNodeManager chooserNodeManager;
 
-  public Tree(ChooserNodeManager factory) {
+  public Tree(ChooserNodeManager chooserNodeManager) {
     super(null, 1);
-    this.factory = factory;
-    initBranch(0, PrincipleChooser.constructor);
+    this.chooserNodeManager = chooserNodeManager;
+    initBranch(0, PrincipleChooser.constructor); // must be done after chooserNodeManager has been initialized
   }
 
   static private class Constructor implements TreeConstructor {
-    public Node makeRoot(ChooserNodeManager factory) { return new Tree(factory); }
+    public Node makeRoot(ChooserNodeManager chooserNodeManager) { return new Tree(chooserNodeManager); }
   }
   static public TreeConstructor constructor = new Constructor();
 
   @Override
-  public ChooserNodeManager getFactory() {
-    return factory;
+  public ChooserNodeManager getChooserNodeManager() {
+    return chooserNodeManager;
   }
 
   @Override

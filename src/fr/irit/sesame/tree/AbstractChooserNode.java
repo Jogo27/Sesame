@@ -30,13 +30,12 @@ abstract public class AbstractChooserNode
 
   /**
    * Register the ChooserNode by the ChooserNodeManager.
-   * This method is usualy called in the method {@link NodeConstructor#makeNode} whose body typically is
-   * <pre>
-   * {@code return (new MyChooserNode(parent, replaceAction)).register() }
-   * </pre>.
+   * This method is usualy called in the method implementing {@link NodeConstructor#makeNode NodeConstructor.makeNode}.
+   * The body of this method typically is
+   * <pre>{@code { return (new MyChooserNode(parent, replaceAction)).register() } }</pre>
    */
   protected Node register() {
-    return this.getFactory().registerChooser(this);
+    return this.getChooserNodeManager().registerChooser(this);
   }
 
   // Implements ChooserNode

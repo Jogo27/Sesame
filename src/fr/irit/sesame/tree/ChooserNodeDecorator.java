@@ -39,8 +39,8 @@ public class ChooserNodeDecorator
     return this.realNode.getText();
   }
 
-  public ChooserNodeManager getFactory() {
-    return this.realNode.getFactory();
+  public ChooserNodeManager getChooserNodeManager() {
+    return this.realNode.getChooserNodeManager();
   }
 
   public InnerNode getParent() {

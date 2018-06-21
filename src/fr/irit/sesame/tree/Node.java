@@ -7,7 +7,7 @@ public interface Node {
 
   InnerNode getParent();
   
-  ChooserNodeManager getFactory();
+  ChooserNodeManager getChooserNodeManager();
   
 
   /**

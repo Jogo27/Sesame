@@ -20,6 +20,12 @@ public abstract class AbstractInnerNode
     children = new Node[this.nbChildren];
   }
 
+  protected AbstractInnerNode(InnerNode parent, NodeConstructor... nodeConstructors) {
+    this(parent, nodeConstructors.length);
+    for (int i = 0; i < nbChildren; i++)
+      initBranch(i, nodeConstructors[i]);
+  }
+
   protected void attachSubtree(int pos, Node subtree) {
     children[pos] = subtree;
     children[pos].addTreeChangedListener(this);
