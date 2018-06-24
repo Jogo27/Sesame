@@ -29,6 +29,7 @@ public class Application
     void setChooser(ChooserNode chooser);
 
     void setNaturalLanguage(String html);
+    void setLatex(String latex);
 
   }
 
@@ -157,6 +158,7 @@ public class Application
 
   private void updatedTree() {
     view.setNaturalLanguage(tree.getText());
+    view.setLatex(tree.getFormula().asLatex());
   }
 
   public void onChooserChange(ChooserChangedEvent event) {

@@ -1,7 +1,10 @@
 package fr.irit.sesame.tree;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import fr.irit.sesame.logic.LogicExpression;
+import fr.irit.sesame.logic.SimplePredicate;
 
 /**
  * Implementation of a ChooserNode using a List for the choices.
@@ -54,6 +57,13 @@ abstract public class AbstractChooserNode
 
   public ReplaceSubtreeAction getReplacementAction() {
     return this.replaceAction;
+  }
+
+  // Implements Node
+  
+  public LogicExpression getFormula() {
+    // TODO: add a dedicated LogicExpression implementation for ChooserNode.
+    return new SimplePredicate(getText());
   }
 
 }

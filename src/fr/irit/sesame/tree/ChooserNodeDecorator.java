@@ -1,5 +1,7 @@
 package fr.irit.sesame.tree;
 
+import fr.irit.sesame.logic.LogicExpression;
+
 public class ChooserNodeDecorator
   extends AbstractTreeChangedHandler
   implements ChooserNode, TreeChangedListener
@@ -37,6 +39,10 @@ public class ChooserNodeDecorator
   
   public String getText() {
     return this.realNode.getText();
+  }
+  
+  public LogicExpression getFormula() {
+    return this.realNode.getFormula();
   }
 
   public ChooserNodeManager getChooserNodeManager() {

@@ -1,5 +1,6 @@
 package fr.irit.sesame.lang;
 
+import fr.irit.sesame.logic.LogicExpression;
 import fr.irit.sesame.tree.AbstractInnerNode;
 import fr.irit.sesame.tree.ChooserNodeManager;
 import fr.irit.sesame.tree.Node;
@@ -52,6 +53,10 @@ public class Tree
 
   public String getText() {
     return children[0].getText();
+  }
+
+  public LogicExpression getFormula() {
+    return children[0].getFormula();
   }
 
 }

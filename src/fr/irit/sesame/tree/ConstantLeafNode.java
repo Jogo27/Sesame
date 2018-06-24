@@ -1,5 +1,8 @@
 package fr.irit.sesame.tree;
 
+import fr.irit.sesame.logic.LogicExpression;
+import fr.irit.sesame.logic.SimplePredicate;
+
 /**
  * A simple LeafNode with constant associated text.
  */
@@ -37,6 +40,10 @@ public class ConstantLeafNode
 
   public String getText() {
     return text;
+  }
+
+  public LogicExpression getFormula() {
+    return new SimplePredicate(text);
   }
 
 }
