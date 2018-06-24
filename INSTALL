@@ -1,0 +1,23 @@
+# REQUIREMENTS
+
+ - Java 7
+ - GWT (tested with version 2.8.2)
+
+# PREREQUISITES
+
+ - Link the GWT folder as libs/gwt, for instance:
+   cd libs ; ln -s ../../gwt-2.8.2 gwt
+
+# COMPILE
+
+The project use the ant tool, with the following tasks:
+
+ - swing-java: compile the swing version of sesame in build/.
+ - swing-jar: compile the swing version as an autonomous jar file.
+ - gwt-java: compile the GWT version as JVM bytecodes.
+ - gwt-js: compile the GWT version as JavaScript.
+ - doc: compile the javadoc
+
+# HOW TO RUN THE GWT VERSION ?
+
+Browse the file war/Main.html.
