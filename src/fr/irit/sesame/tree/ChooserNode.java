@@ -8,6 +8,8 @@ package fr.irit.sesame.tree;
  */
 public interface ChooserNode extends LeafNode {
 
+  ReplaceSubtreeAction getReplacementAction();
+
   int getNbChoices();
   
   String getChoice(int pos);

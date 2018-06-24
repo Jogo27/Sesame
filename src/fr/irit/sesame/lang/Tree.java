@@ -1,7 +1,8 @@
 package fr.irit.sesame.lang;
 
+import fr.irit.sesame.logic.LogicExpression;
 import fr.irit.sesame.tree.AbstractInnerNode;
-import fr.irit.sesame.tree.ChooserNodeFactory;
+import fr.irit.sesame.tree.ChooserNodeManager;
 import fr.irit.sesame.tree.Node;
 import fr.irit.sesame.tree.OutOfTreeException;
 import fr.irit.sesame.tree.TraversalException;
@@ -16,22 +17,22 @@ public class Tree
 {
   // TODO: write an abstract class in the tree package.
 
-  private ChooserNodeFactory factory;
+  private ChooserNodeManager chooserNodeManager;
 
-  public Tree(ChooserNodeFactory factory) {
+  public Tree(ChooserNodeManager chooserNodeManager) {
     super(null, 1);
-    this.factory = factory;
-    initChooser(0, PrincipleChooser.constructor);
+    this.chooserNodeManager = chooserNodeManager;
+    initBranch(0, PrincipleChooser.constructor); // must be done after chooserNodeManager has been initialized
   }
 
   static private class Constructor implements TreeConstructor {
-    public Node makeRoot(ChooserNodeFactory factory) { return new Tree(factory); }
+    public Node makeRoot(ChooserNodeManager chooserNodeManager) { return new Tree(chooserNodeManager); }
   }
   static public TreeConstructor constructor = new Constructor();
 
   @Override
-  public ChooserNodeFactory getFactory() {
-    return factory;
+  public ChooserNodeManager getChooserNodeManager() {
+    return chooserNodeManager;
   }
 
   @Override
@@ -52,6 +53,10 @@ public class Tree
 
   public String getText() {
     return children[0].getText();
+  }
+
+  public LogicExpression getFormula() {
+    return children[0].getFormula();
   }
 
 }

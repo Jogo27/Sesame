@@ -3,9 +3,8 @@ package fr.irit.sesame.ui;
 import java.lang.reflect.InvocationTargetException;
 
 import fr.irit.sesame.tree.ChooserNode;
-import fr.irit.sesame.tree.ChooserNodeConstructor;
 import fr.irit.sesame.tree.ChooserNodeDecorator;
-import fr.irit.sesame.tree.ChooserNodeFactory;
+import fr.irit.sesame.tree.ChooserNodeManager;
 import fr.irit.sesame.tree.LeafNode;
 import fr.irit.sesame.tree.Node;
 import fr.irit.sesame.tree.ReplaceSubtreeAction;
@@ -15,10 +14,10 @@ import fr.irit.sesame.tree.TreeChangedListener;
 import fr.irit.sesame.util.ListenerHandler;
 
 /**
- * ChooserNodeFactory for tests.
+ * ChooserNodeManager for tests.
  */
-public class GenericChooserModel
-  implements ChooserNodeFactory, TreeChangedListener
+public class ChooserModel
+  implements ChooserNodeManager, TreeChangedListener
 {
 
   // Fields
@@ -31,7 +30,7 @@ public class GenericChooserModel
 
   // Constructor
 
-  public GenericChooserModel() {
+  public ChooserModel() {
     root = null;
     currentChooser = null;
     chooserChangedListeners = new ListenerHandler<ChooserChangedListener>();
@@ -92,14 +91,12 @@ public class GenericChooserModel
   static private class NavigableChooserNode
       extends ChooserNodeDecorator
   {
-    final ReplaceSubtreeAction action;
     NavigableChooserNode prev;
     NavigableChooserNode next;
     private boolean selected;
 
-    NavigableChooserNode(ChooserNode node, ReplaceSubtreeAction action) {
+    NavigableChooserNode(ChooserNode node) {
       super(node);
-      this.action = action;
       this.prev = null;
       this.next = null;
       this.selected = false;
@@ -198,13 +195,13 @@ public class GenericChooserModel
     @Override
     public void undo() {
       super.undo();
-      GenericChooserModel.this.setCurrent(undoSelect);
+      ChooserModel.this.setCurrent(undoSelect);
     }
 
     @Override
     public void redo() {
       super.redo();
-      GenericChooserModel.this.setCurrent(redoSelect);
+      ChooserModel.this.setCurrent(redoSelect);
     }
 
     public boolean isSignificant() {
@@ -220,7 +217,7 @@ public class GenericChooserModel
     ChooserNodesInterval interval;
 
     UndoableChooseAction(NavigableChooserNode oldChooser, Node newSubtree) {
-      super(false, oldChooser.action, newSubtree);
+      super(false, oldChooser.getReplacementAction(), newSubtree);
       this.interval = new ChooserNodesInterval(newSubtree);
       if (interval.first != null) {
         interval.first.prev = oldChooser.prev;
@@ -234,7 +231,7 @@ public class GenericChooserModel
       NavigableChooserNode soleChooser = (NavigableChooserNode) action.currentSubtree();
       if (soleChooser.prev != null) soleChooser.prev.next = soleChooser;
       if (soleChooser.next != null) soleChooser.next.prev = soleChooser;
-      GenericChooserModel.this.setCurrent(soleChooser);
+      ChooserModel.this.setCurrent(soleChooser);
     }
 
     @Override
@@ -243,7 +240,7 @@ public class GenericChooserModel
       NavigableChooserNode soleChooser = (NavigableChooserNode) altSubtree;
       if (soleChooser.prev != null) soleChooser.prev.next = (interval.first != null ? interval.first : soleChooser.next);
       if (soleChooser.next != null) soleChooser.next.prev = (interval.last  != null ? interval.last  : soleChooser.prev);
-      GenericChooserModel.this.setCurrent(  interval.first   != null ? interval.first :
+      ChooserModel.this.setCurrent(  interval.first   != null ? interval.first :
                                           ( soleChooser.next != null ? soleChooser.next :
                                                                        soleChooser.prev ));
     }
@@ -264,18 +261,17 @@ public class GenericChooserModel
   }
 
 
-  // Implements interface ChooserNodeFactory
+  // Implements interface ChooserNodeManager
 
-  public ChooserNode getChooser(ChooserNodeConstructor constructor, ReplaceSubtreeAction replacement)
-  {
-    return new NavigableChooserNode(constructor.makeChooserNode(replacement.getParentNode()), replacement);
+  public ChooserNode registerChooser(ChooserNode chooserNode) {
+    return new NavigableChooserNode(chooserNode);
   }
 
 
   // Implements interface TreeChangedListener
 
   public void onTreeChange(TreeChangedEvent evt) {
-    // Currently, any change in the tree corresponds to a change in the GenericChooserModel.
+    // Currently, any change in the tree corresponds to a change in the ChooserModel.
     fireChooserChangedEvent(new ChooserChangedEvent(evt));
   }
 

@@ -1,18 +1,29 @@
 package fr.irit.sesame.tree;
 
+import fr.irit.sesame.logic.LogicExpression;
+import fr.irit.sesame.logic.SimplePredicate;
+
 /**
  * A simple LeafNode with constant associated text.
  */
-public class ConstantLeafNode extends AbstractLeafNode {
+public class ConstantLeafNode
+  extends AbstractLeafNode
+{
 
   static public class Constructor
-    extends AbstractNode.Constructor
+      implements NodeConstructor
   {
-    public Constructor(String text) {
-      super(text);
+    private String description;
+
+    public Constructor(String description) {
+      this.description = description;
     }
 
-    public Node makeNode(InnerNode parent) {
+    public String getDescription() {
+      return description;
+    }
+
+    public Node makeNode(InnerNode parent, ReplaceSubtreeAction action) {
       return new ConstantLeafNode(parent, description);
     }
   }
@@ -29,6 +40,10 @@ public class ConstantLeafNode extends AbstractLeafNode {
 
   public String getText() {
     return text;
+  }
+
+  public LogicExpression getFormula() {
+    return new SimplePredicate(text);
   }
 
 }

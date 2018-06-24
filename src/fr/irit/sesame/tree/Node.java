@@ -1,5 +1,7 @@
 package fr.irit.sesame.tree;
 
+import fr.irit.sesame.logic.LogicExpression;
+
 /**
  * Any node in the tree.
  */
@@ -7,7 +9,7 @@ public interface Node {
 
   InnerNode getParent();
   
-  ChooserNodeFactory getFactory();
+  ChooserNodeManager getChooserNodeManager();
   
 
   /**
@@ -32,6 +34,6 @@ public interface Node {
 
   String getText();
 
-  //TODO: getter for formula
+  LogicExpression getFormula();
 
 }

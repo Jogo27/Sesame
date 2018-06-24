@@ -108,10 +108,14 @@ public class Main
     buttons.get(id).setEnabled(enabled);
   }
 
-  // Natural language output
+  // Output
   
   public void setNaturalLanguage(String descr) {
     textOutput.setHTML(descr);
   }
+
+  public native void setLatex(String latex) /*-{
+    $wnd.updateMathOutput(latex);
+  }-*/;
 
 }

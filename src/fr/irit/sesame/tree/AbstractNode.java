@@ -18,20 +18,6 @@ public abstract class AbstractNode
 
   // Constructor
 
-  static protected abstract class Constructor
-    implements NodeConstructor
-  {
-    protected String description;
-
-    public Constructor(String description) {
-      this.description = description;
-    }
-
-    public String getDescription() {
-      return description;
-    }
-  }
-
   protected AbstractNode(InnerNode parent) {
     super();
     this.parent = parent;
@@ -43,8 +29,8 @@ public abstract class AbstractNode
     return parent;
   }
 
-  public ChooserNodeFactory getFactory() {
-    return getParent().getFactory();
+  public ChooserNodeManager getChooserNodeManager() {
+    return getParent().getChooserNodeManager();
   }
 
 }

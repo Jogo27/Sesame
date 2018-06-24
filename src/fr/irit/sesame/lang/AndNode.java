@@ -1,9 +1,13 @@
 package fr.irit.sesame.lang;
 
+import fr.irit.sesame.logic.AndConstruct;
+import fr.irit.sesame.logic.Formula;
+import fr.irit.sesame.logic.LogicExpression;
 import fr.irit.sesame.tree.AbstractInnerNode;
 import fr.irit.sesame.tree.InnerNode;
 import fr.irit.sesame.tree.Node;
 import fr.irit.sesame.tree.NodeConstructor;
+import fr.irit.sesame.tree.ReplaceSubtreeAction;
 
 public class AndNode
   extends AbstractInnerNode
@@ -12,14 +16,14 @@ public class AndNode
   // Constructors
   
   private AndNode(InnerNode parent) {
-    super(parent, 2);
-    initChooser(0, PrincipleChooser.constructor);
-    initChooser(1, PrincipleChooser.constructor);
+    super(parent,
+        PrincipleChooser.constructor,
+        PrincipleChooser.constructor);
   }
 
   static private class Constructor implements NodeConstructor {
     public String getDescription() { return makeDescription(PrincipleChooser.description, PrincipleChooser.description); }
-    public Node makeNode(InnerNode parent) { return new AndNode(parent); }
+    public Node makeNode(InnerNode parent, ReplaceSubtreeAction action) { return new AndNode(parent); }
   }
 
   static public NodeConstructor constructor = new Constructor();
@@ -32,6 +36,10 @@ public class AndNode
 
   public String getText() {
     return makeDescription(children[0].getText(), children[1].getText());
+  }
+
+  public LogicExpression getFormula() {
+    return new AndConstruct( (Formula) children[0].getFormula(), (Formula) children[1].getFormula() );
   }
 
 }

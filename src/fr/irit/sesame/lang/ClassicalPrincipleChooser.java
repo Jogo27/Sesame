@@ -7,24 +7,24 @@ import fr.irit.sesame.tree.Node;
 import fr.irit.sesame.tree.NodeConstructor;
 import fr.irit.sesame.tree.ReplaceSubtreeAction;
 
-public class PrincipleChooser
+public class ClassicalPrincipleChooser
   extends AbstractChooserNode
 {
 
-  static String description = "[principle]";
+  static String description = "[classical principle]";
 
   // Constructors
   
-  PrincipleChooser(InnerNode parent, ReplaceSubtreeAction replaceAction) {
+  ClassicalPrincipleChooser(InnerNode parent, ReplaceSubtreeAction replaceAction) {
     super(parent, replaceAction);
-    choices.add(0, ClassicalPrincipleChooser.constructor);
-    choices.add(1, AndNode.constructor);
+    choices.add(0, new ConstantLeafNode.Constructor("A"));
+    choices.add(1, new ConstantLeafNode.Constructor("B"));
   }
 
   private static class Constructor implements NodeConstructor {
     public String getDescription() { return description; }
     public Node makeNode(InnerNode parent, ReplaceSubtreeAction replaceAction)
-    { return (new PrincipleChooser(parent, replaceAction)).register(); }
+    { return (new ClassicalPrincipleChooser(parent, replaceAction)).register(); }
   }
 
   public static NodeConstructor constructor = new Constructor();
